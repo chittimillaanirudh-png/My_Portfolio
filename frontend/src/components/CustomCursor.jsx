@@ -1,61 +1,156 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from 'react';
 
 export default function CustomCursor() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-  const [isMobile, setIsMobile] = useState(true);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const isTouchDevice =
-      "ontouchstart" in window ||
-      navigator.maxTouchPoints > 0 ||
-      window.matchMedia("(pointer: coarse)").matches;
-      
-    if (window.innerWidth < 768 || isTouchDevice) {
-      setIsMobile(true);
-      return;
-    }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let animationFrameId;
+
+    // Mouse & State tracking
+    let mouse = { x: null, y: null, active: false };
+    let isHovering = false;
     
-    setIsMobile(false);
-    document.body.classList.add("custom-cursor-active");
+    let cursorColorFloat = 0;
+    let cursorLerpX = null;
+    let cursorLerpY = null;
+    let baseRadius = 18;
+    let hoverRadius = 42;
+    let currentRadius = baseRadius;
 
+    // Resize handler
+    const resizeCanvas = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Mouse movement
     const onMouseMove = (e) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
     };
+    const onMouseLeave = () => {
+      mouse.active = false;
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseleave', onMouseLeave);
 
-    const updateHoverState = (e) => {
-      if (
-        e.target.closest(
-          'a, button, .social-link, .skill-card, .btn-primary, .btn-outline, input, textarea, .card, [role="button"]'
-        )
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
+    // Hover state detection across the entire document
+    const handleMouseOver = (e) => {
+      const target = e.target.closest('a, button, input, textarea, [role="button"]');
+      if (target) isHovering = true;
+    };
+    const handleMouseOut = (e) => {
+      const target = e.target.closest('a, button, input, textarea, [role="button"]');
+      if (target) isHovering = false;
+    };
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
+
+    // Render loop
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      if (mouse.active && mouse.x !== null) {
+        if (cursorLerpX === null) {
+          cursorLerpX = mouse.x;
+          cursorLerpY = mouse.y;
+        } else {
+          // Lerp for smooth following
+          cursorLerpX += (mouse.x - cursorLerpX) * 0.70;
+          cursorLerpY += (mouse.y - cursorLerpY) * 0.70;
+        }
+
+        // Interpolate state values based on hover
+        cursorColorFloat += ((isHovering ? 1 : 0) - cursorColorFloat) * 0.15;
+        currentRadius += ((isHovering ? hoverRadius : baseRadius) - currentRadius) * 0.15;
+
+        ctx.save();
+
+        // Exact Color Matching: Green (120, 167, 63) to Red (223, 107, 93)
+        const r = Math.round(120 + (223 - 120) * cursorColorFloat);
+        const g = Math.round(167 + (107 - 167) * cursorColorFloat);
+        const b = Math.round(63 + (93 - 63) * cursorColorFloat);
+        const ringColorAlpha = (a) => `rgba(${r},${g},${b},${a})`;
+
+        const time = Date.now() * 0.0015;
+        ctx.translate(cursorLerpX, cursorLerpY);
+
+        // 1. Ambient Background Glow
+        const haloRadius = currentRadius + (isHovering ? 18 : 12);
+        const halo = ctx.createRadialGradient(0, 0, currentRadius - 10, 0, 0, haloRadius);
+        halo.addColorStop(0, ringColorAlpha(0));
+        halo.addColorStop(0.3, ringColorAlpha(isHovering ? 0.08 : 0.05));
+        halo.addColorStop(0.7, ringColorAlpha(isHovering ? 0.02 : 0.01));
+        halo.addColorStop(1, ringColorAlpha(0));
+
+        ctx.beginPath();
+        ctx.arc(0, 0, haloRadius, 0, Math.PI * 2);
+        ctx.fillStyle = halo;
+        ctx.fill();
+
+        // 2. Dense Energy Flow Strands
+        const strandsCount = isHovering ? 28 : 15;
+        for (let s = 0; s < strandsCount; s++) {
+          ctx.beginPath();
+          const segments = 40;
+          for (let j = 0; j <= segments; j++) {
+            const angle = (j / segments) * Math.PI * 2;
+            const wave1 = Math.sin(angle * (2 + (s % 3)) + time * (1 + s * 0.2) + s);
+            const wave2 = Math.cos(angle * (3 + (s % 2)) - time * (0.8 + s * 0.3) + s * 2);
+
+            const amplitude = 1 + (s * (isHovering ? 0.6 : 0.4));
+            const normalizedWave = (wave1 + wave2 + 2) / 2;
+            const rOffset = normalizedWave * amplitude;
+
+            const baseR = isHovering ? currentRadius - 2 : currentRadius;
+            const rVal = baseR + rOffset;
+
+            const x = Math.cos(angle) * rVal;
+            const y = Math.sin(angle) * rVal;
+
+            if (j === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+
+          const strandAlpha = isHovering ? (0.15 - (s * 0.005)) : (0.12 - (s * 0.005));
+          ctx.strokeStyle = ringColorAlpha(Math.max(0.01, strandAlpha));
+          ctx.lineWidth = 1 + (s * 0.05);
+          ctx.stroke();
+        }
+
+        ctx.restore();
       }
+
+      animationFrameId = requestAnimationFrame(animate);
     };
 
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseover", updateHoverState);
+    animate();
 
+    // Cleanup
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseover", updateHoverState);
+      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseleave', onMouseLeave);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
-  if (isMobile) return null;
-
   return (
-    <>
-      <div
-        className={`cursor ${isHovering ? "hover" : ""}`}
-        style={{ left: `${position.x}px`, top: `${position.y}px` }}
-      ></div>
-      <div
-        className={`cursor-follower ${isHovering ? "hover" : ""}`}
-        style={{ left: `${position.x}px`, top: `${position.y}px` }}
-      ></div>
-    </>
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none z-[99999] hidden md:block"
+      style={{ willChange: 'transform' }}
+    />
   );
 }
