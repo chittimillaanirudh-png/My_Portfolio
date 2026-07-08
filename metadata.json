@@ -1,0 +1,6 @@
+{
+  "name": "Anirudh Chittimilla Portfolio",
+  "description": "The professional digital portfolio of Anirudh Chittimilla, built with interactive particle backgrounds, ambient dark aesthetics, dynamic clocks, and customizable pages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

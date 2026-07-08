@@ -1,0 +1,17 @@
+{
+  "name": "anirudh-portfolio-backend",
+  "version": "1.0.0",
+  "description": "Express.js Backend API Server for Anirudh's Portfolio",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@google/genai": "^2.10.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
