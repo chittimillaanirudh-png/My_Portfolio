@@ -69,12 +69,12 @@ export default function ParticleBg() {
         if (this.type === 0) {
           this.baseRadius = 250 + (Math.random() * 60 - 30);
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = (Math.random() * 0.01 + 0.015);
+          this.speed = (Math.random() * 0.005 + 0.0075);
           this.baseSize = Math.random() * 0.8 + 0.4;
         } else if (this.type === 1) {
           this.baseRadius = 150 + (Math.random() * 40 - 20);
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = -(Math.random() * 0.008 + 0.012);
+          this.speed = -(Math.random() * 0.004 + 0.006);
           this.baseSize = Math.random() * 0.6 + 0.3;
         } else {
           this.x = Math.random() * width;
@@ -124,24 +124,26 @@ export default function ParticleBg() {
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
           if (dist < mouse.radius) {
-            if (dist < 20) {
-              this.x = Math.random() * width;
-              this.y = Math.random() * height;
-              this.offsetX = 0;
-              this.offsetY = 0;
-              this.currentX = this.x;
-              this.currentY = this.y;
-            } else {
-              const forceMultiplier = isTouchDevice ? 0.25 : 1;
-              const force = Math.pow((mouse.radius - dist) / mouse.radius, 1.5) * forceMultiplier;
+            targetOpacity = 1;
+            targetGlow = 25;
 
-              this.offsetX -= (dx / dist) * force * 20;
-              this.offsetY -= (dy / dist) * force * 20;
-              this.offsetX += (-dy / dist) * force * 15;
-              this.offsetY += (dx / dist) * force * 15;
+            // Only random particles (type 2) attract/merge to cursor
+            if (this.type === 2) {
+              if (dist < 20) {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.offsetX = 0;
+                this.offsetY = 0;
+                this.currentX = this.x;
+                this.currentY = this.y;
+              } else {
+                const force = Math.pow((mouse.radius - dist) / mouse.radius, 1.5);
 
-              targetOpacity = 1;
-              targetGlow = isTouchDevice ? 10 : 25;
+                this.offsetX -= (dx / dist) * force * 20;
+                this.offsetY -= (dy / dist) * force * 20;
+                this.offsetX += (-dy / dist) * force * 15;
+                this.offsetY += (dx / dist) * force * 15;
+              }
             }
           }
         }
