@@ -9,6 +9,7 @@ import ParticleBg from "./components/ParticleBg";
 import TimeDisplay from "./components/TimeDisplay";
 import ScrollToTop from "./components/ScrollToTop";
 import LoadingScreen from "./components/LoadingScreen";
+import TorchTransition from "./components/TorchTransition";
 
 // Pages
 import Home from "./pages/Home";
@@ -30,6 +31,9 @@ export default function App() {
         <div id="page-content" className="relative min-h-screen flex flex-col bg-black overflow-x-hidden">
           {/* Global Ambient Interactive Canvas Background */}
           <ParticleBg />
+          
+          {/* Page Transition Effect */}
+          <TorchTransition />
 
           {/* Persistent Standard Header Nav */}
           <Header />

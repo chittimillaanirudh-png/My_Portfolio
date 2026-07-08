@@ -65,13 +65,21 @@ const Portfolio = mongoose.models.Portfolio || mongoose.model("Portfolio", Portf
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (MONGODB_URI) {
-  mongoose.connect(MONGODB_URI)
+  mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s so the server remains responsive
+  })
     .then(() => {
       console.log("Successfully connected to MongoDB Atlas");
     })
     .catch((err) => {
-      console.error("MongoDB Atlas connection error:", err);
-      console.log("Falling back to local JSON file database.");
+      console.error("MongoDB Atlas connection error:", err.message);
+      console.log("--------------------------------------------------------------------------------");
+      console.log("⚠️  MongoDB connection failed. This is usually due to one of the following:");
+      console.log("1. Your current IP address is not whitelisted in MongoDB Atlas.");
+      console.log("   Go to Atlas -> Network Access -> 'Add IP Address' -> Select 'Allow Access From Anywhere' (0.0.0.0/0).");
+      console.log("2. Incorrect MongoDB URI username or password.");
+      console.log("--------------------------------------------------------------------------------");
+      console.log("Falling back to local JSON file database for now.");
     });
 } else {
   console.log("No MONGODB_URI environment variable detected. Running in local file system database mode.");
