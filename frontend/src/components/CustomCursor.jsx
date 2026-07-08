@@ -135,8 +135,12 @@ export default function CustomCursor() {
 
     animate();
 
+    // Hide default cursor
+    document.body.classList.add('custom-cursor-active');
+
     // Cleanup
     return () => {
+      document.body.classList.remove('custom-cursor-active');
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseleave', onMouseLeave);

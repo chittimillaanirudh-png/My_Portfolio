@@ -69,12 +69,12 @@ export default function ParticleBg() {
         if (this.type === 0) {
           this.baseRadius = 250 + (Math.random() * 60 - 30);
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = (Math.random() * 0.002 + 0.003);
+          this.speed = (Math.random() * 0.01 + 0.015);
           this.baseSize = Math.random() * 0.8 + 0.4;
         } else if (this.type === 1) {
           this.baseRadius = 150 + (Math.random() * 40 - 20);
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = -(Math.random() * 0.0015 + 0.002);
+          this.speed = -(Math.random() * 0.008 + 0.012);
           this.baseSize = Math.random() * 0.6 + 0.3;
         } else {
           this.x = Math.random() * width;
