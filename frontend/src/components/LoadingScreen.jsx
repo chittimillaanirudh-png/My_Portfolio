@@ -2,9 +2,25 @@ import React, { useEffect, useState, useRef } from "react";
 
 export default function LoadingScreen({ onComplete }) {
   const [visible, setVisible] = useState(true);
+  const [isQuick, setIsQuick] = useState(false);
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    // Check navigation detection variables
+    const shouldBlink = window.__AC_SHOW_BLINK;
+    const shouldLoad = window.__AC_SHOW_LOADING;
+    
+    // If we shouldn't show anything (edge case), just complete immediately
+    if (!shouldLoad && !shouldBlink) {
+      setVisible(false);
+      onComplete();
+      return;
+    }
+
+    if (shouldBlink) {
+      setIsQuick(true);
+    }
+
     // Particle background animation inside loading screen
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -108,12 +124,14 @@ export default function LoadingScreen({ onComplete }) {
     };
     animate();
 
-    // End loading screen after 4 seconds
+    // Determine duration based on quick mode
+    const duration = shouldBlink ? 1000 : 4200;
+
     const timer = setTimeout(() => {
       sessionStorage.setItem("portfolio-loaded", "true");
       setVisible(false);
       onComplete();
-    }, 4200);
+    }, duration);
 
     return () => {
       cancelAnimationFrame(animationId);
@@ -126,7 +144,7 @@ export default function LoadingScreen({ onComplete }) {
 
   return (
     <div
-      className="fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center overflow-hidden transition-all duration-1000"
+      className={`fixed inset-0 z-[10000] bg-black flex flex-col items-center justify-center overflow-hidden transition-all duration-1000 ${isQuick ? "quick-mode opacity-0 pointer-events-none" : ""}`}
       id="loading-screen"
     >
       <canvas ref={canvasRef} id="loading-particles" className="absolute inset-0 z-[1] pointer-events-none" />

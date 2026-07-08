@@ -25,6 +25,32 @@
       })();
     </script>
     
+    <!-- ─── NAVIGATION TYPE DETECTION ────────────────────────────── -->
+    <script>
+      (function () {
+          var navEntries = performance.getEntriesByType("navigation");
+          var navType = navEntries.length > 0 ? navEntries[0].type : null;
+
+          if (!navType) {
+              if (typeof performance !== "undefined" && performance.navigation) {
+                  navType = performance.navigation.type === 1 ? "reload" : "navigate";
+              } else {
+                  navType = "navigate";
+              }
+          }
+
+          var isReload = navType === "reload";
+          var wasVisited = sessionStorage.getItem("ac_visited") === "true";
+          sessionStorage.setItem("ac_visited", "true");
+
+          var showLoading = (!wasVisited) || isReload;
+          var showBlink = wasVisited && !isReload;
+
+          window.__AC_SHOW_LOADING = showLoading;
+          window.__AC_SHOW_BLINK = showBlink;
+      })();
+    </script>
+    
     <link rel="icon" type="image/png" href="https://res.cloudinary.com/dqsl62kr9/image/upload/v1776693781/ChatGPT_Image_Apr_20_2026_07_32_51_PM_jymrza.png">
   </head>
   <body class="text-on-surface font-body selection:bg-primary/30 antialiased overflow-x-hidden bg-[#000000]">
