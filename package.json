@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "node backend/server.js",
-    "build": "vite build frontend",
+    "build": "npm run build --prefix frontend",
     "start": "node backend/server.js",
-    "lint": "vite build frontend",
+    "lint": "npm run lint --prefix frontend",
     "postinstall": "npm run build"
   },
   "dependencies": {

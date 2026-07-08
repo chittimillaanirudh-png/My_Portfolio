@@ -105,6 +105,16 @@ export default function ParticleBg() {
         let targetOpacity = 0.4;
         let targetGlow = 0;
 
+        if (!isMobile && mouse.active && mouse.x !== null) {
+          const dx = this.currentX - mouse.x;
+          const dy = this.currentY - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            targetOpacity = 0.8;
+            targetGlow = 10;
+          }
+        }
+
         this.opacity += (targetOpacity - this.opacity) * 0.1;
         this.glow += (targetGlow - this.glow) * 0.1;
 
