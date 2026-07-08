@@ -5,16 +5,18 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
-    "build": "vite build",
-    "start": "node server.js",
-    "lint": "vite build"
+    "dev": "node backend/server.js",
+    "build": "vite build frontend",
+    "start": "node backend/server.js",
+    "lint": "vite build frontend"
   },
   "dependencies": {
     "@google/genai": "^2.10.0",
     "express": "^4.19.2",
     "framer-motion": "^12.42.2",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.23.0",
+    "mongoose": "^9.7.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1"

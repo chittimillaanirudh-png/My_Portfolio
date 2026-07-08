@@ -2,19 +2,15 @@ anirudh-portfolio-bucket/
 ├── backend/
 │   ├── data/
 │   │   └── portfolio.json
-│   ├── .env.example
-│   ├── package.json
 │   └── server.js
 ├── frontend/
 │   ├── index.html
-│   ├── package.json
 │   ├── vite.config.js
 │   └── src/
 │       ├── App.jsx
 │       ├── index.css
 │       ├── main.jsx
 │       ├── components/
-│       │   ├── CustomCursor.jsx
 │       │   ├── Footer.jsx
 │       │   ├── Header.jsx
 │       │   ├── LoadingScreen.jsx
@@ -31,4 +27,12 @@ anirudh-portfolio-bucket/
 │           ├── Home.jsx
 │           ├── Projects.jsx
 │           └── Skills.jsx
-└── README_PORTFOLIO.md
+├── .env
+├── .env.example
+├── .gitignore
+├── metadata.json
+├── package.json
+├── package-lock.json
+├── README_PORTFOLIO.md
+└── README_STRUCTURE.md
+

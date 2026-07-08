@@ -131,7 +131,7 @@ export default function ParticleBg() {
         this.currentX = this.x + this.offsetX;
         this.currentY = this.y + this.offsetY - parallaxOffset;
 
-        let targetOpacity = 0.4;
+        let targetOpacity = 0.45;
         let targetGlow = 0;
 
         if (!isMobile && mouse.active && mouse.x !== null) {
@@ -156,8 +156,8 @@ export default function ParticleBg() {
               this.offsetX += (-dy / dist) * force * 10;
               this.offsetY += (dx / dist) * force * 10;
 
-              targetOpacity = 0.95;
-              targetGlow = isTouchDevice ? 6 : 15;
+              targetOpacity = 0.58;
+              targetGlow = isTouchDevice ? 2 : 4;
             }
           }
         }
@@ -172,8 +172,8 @@ export default function ParticleBg() {
             const force = 1 - distanceToRim / 30;
             this.offsetX += (dx / dist) * force * 10;
             this.offsetY += (dy / dist) * force * 10;
-            targetOpacity = 0.95;
-            targetGlow = 15;
+            targetOpacity = 0.65;
+            targetGlow = 4;
           }
         }
 

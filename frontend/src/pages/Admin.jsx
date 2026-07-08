@@ -49,7 +49,7 @@ export default function Admin() {
   useEffect(() => {
     // Check session
     const token = sessionStorage.getItem("admin_token");
-    if (token === "anirudh-portfolio-admin-session-token-2026") {
+    if (token) {
       setIsLoggedIn(true);
     }
     

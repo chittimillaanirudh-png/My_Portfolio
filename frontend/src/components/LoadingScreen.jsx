@@ -57,7 +57,7 @@ export default function LoadingScreen({ onComplete }) {
 
         this.currentX = 0;
         this.currentY = 0;
-        this.opacity = 0.65;
+        this.opacity = 0.60;
       }
 
       update() {

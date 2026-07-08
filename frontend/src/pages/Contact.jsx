@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, Share2, Send, ArrowRight } from "lucide-react";
 import Toast from "../components/Toast";
@@ -12,6 +12,30 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState(null); // { message, type }
+  const [emailConfig, setEmailConfig] = useState({
+    serviceId: "service_bdu1n5v",
+    templateId: "template_7u102re",
+    publicKey: "KqrFRK0YlakuNxj9K"
+  });
+
+  useEffect(() => {
+    fetch("/api/config/emailjs")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load email config from server");
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.serviceId && data.templateId && data.publicKey) {
+          setEmailConfig(data);
+          if (window.emailjs) {
+            window.emailjs.init(data.publicKey);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("Using default fallback EmailJS credentials:", err);
+      });
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,10 +55,11 @@ export default function Contact() {
 
     // Call window.emailjs directly (loaded via CDN in index.html)
     if (window.emailjs) {
+      window.emailjs.init(emailConfig.publicKey);
       window.emailjs
         .sendForm(
-          "service_bdu1n5v",
-          "template_7u102re",
+          emailConfig.serviceId,
+          emailConfig.templateId,
           formRef.current
         )
         .then(
