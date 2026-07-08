@@ -10,6 +10,7 @@ import TimeDisplay from "./components/TimeDisplay";
 import ScrollToTop from "./components/ScrollToTop";
 import LoadingScreen from "./components/LoadingScreen";
 import TorchTransition from "./components/TorchTransition";
+import CustomCursor from "./components/CustomCursor";
 
 // Pages
 import Home from "./pages/Home";
@@ -31,6 +32,9 @@ export default function App() {
         <div id="page-content" className="relative min-h-screen flex flex-col bg-black overflow-x-hidden">
           {/* Global Ambient Interactive Canvas Background */}
           <ParticleBg />
+          
+          {/* Custom DOM Cursor */}
+          <CustomCursor />
           
           {/* Page Transition Effect */}
           <TorchTransition />
