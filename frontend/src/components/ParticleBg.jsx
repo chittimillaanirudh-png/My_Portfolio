@@ -17,8 +17,7 @@ export default function ParticleBg() {
     let centerY = height / 2;
 
     const colors = ["#87b652", "#df6b5d"];
-    const mouse = { x: null, y: null, active: false, radius: 250 };
-    const ripple = { active: false, x: 0, y: 0, radius: 0, maxRadius: 0, speed: 12 };
+    const mouse = { x: null, y: null, active: false };
 
     const isTouchDevice =
       "ontouchstart" in window ||
@@ -46,20 +45,10 @@ export default function ParticleBg() {
       mouse.active = false;
     };
 
-    const handleClick = (e) => {
-      if (isTouchDevice) return;
-      ripple.x = e.clientX;
-      ripple.y = e.clientY;
-      ripple.radius = 0;
-      ripple.maxRadius = Math.max(width, height) * 1.5;
-      ripple.active = true;
-    };
-
     if (!isMobile) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseleave", handleMouseLeave);
     }
-    window.addEventListener("click", handleClick);
 
     class Particle {
       constructor(type) {
@@ -116,53 +105,6 @@ export default function ParticleBg() {
         let targetOpacity = 0.4;
         let targetGlow = 0;
 
-        if (!isMobile && mouse.active && mouse.x !== null) {
-          const cx = mouse.x;
-          const cy = mouse.y;
-          const dx = this.currentX - cx;
-          const dy = this.currentY - cy;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-
-          if (dist < mouse.radius) {
-            targetOpacity = 1;
-            targetGlow = 25;
-
-            // Only random particles (type 2) attract/merge to cursor
-            if (this.type === 2) {
-              if (dist < 20) {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.offsetX = 0;
-                this.offsetY = 0;
-                this.currentX = this.x;
-                this.currentY = this.y;
-              } else {
-                const force = Math.pow((mouse.radius - dist) / mouse.radius, 1.5);
-
-                this.offsetX -= (dx / dist) * force * 20;
-                this.offsetY -= (dy / dist) * force * 20;
-                this.offsetX += (-dy / dist) * force * 15;
-                this.offsetY += (dx / dist) * force * 15;
-              }
-            }
-          }
-        }
-
-        if (ripple.active && !isTouchDevice) {
-          const dx = this.currentX - ripple.x;
-          const dy = this.currentY - ripple.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          const distanceToRim = Math.abs(dist - ripple.radius);
-          if (distanceToRim < 30) {
-            const force = 1 - distanceToRim / 30;
-            this.offsetX += (dx / dist) * force * 12;
-            this.offsetY += (dy / dist) * force * 12;
-            targetOpacity = 1;
-            targetGlow = 25;
-          }
-        }
-
         this.opacity += (targetOpacity - this.opacity) * 0.1;
         this.glow += (targetGlow - this.glow) * 0.1;
 
@@ -198,13 +140,6 @@ export default function ParticleBg() {
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
 
-      if (ripple.active) {
-        ripple.radius += ripple.speed;
-        if (ripple.radius > ripple.maxRadius) {
-          ripple.active = false;
-        }
-      }
-
       particles.forEach((p) => {
         p.update();
         p.draw();
@@ -222,7 +157,6 @@ export default function ParticleBg() {
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("mouseleave", handleMouseLeave);
       }
-      window.removeEventListener("click", handleClick);
     };
   }, []);
 
