@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import API_BASE from "../utils/api";
 
 export default function Projects() {
   const [projects, setProjects] = useState([
@@ -23,7 +24,7 @@ export default function Projects() {
   ]);
 
   useEffect(() => {
-    fetch("/api/portfolio")
+    fetch(`${API_BASE}/api/portfolio`)
       .then((res) => {
         if (res.ok) return res.json();
         throw new Error("Failed to load");

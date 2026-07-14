@@ -21,11 +21,48 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// ── CORS ─────────────────────────────────────────────────────────────────────
+// In development (NODE_ENV !== "production") every origin is allowed so local
+// dev tools (Vite on :5173, curl, Postman, etc.) all work without configuration.
+//
+// In production the middleware only echoes the Allow-Origin header for origins
+// listed in the ALLOWED_ORIGINS environment variable (comma-separated), e.g.:
+//   ALLOWED_ORIGINS=https://your-app.vercel.app,https://preview.vercel.app
+//
+// The OPTIONS preflight is handled and short-circuited with 204 so browsers
+// do not block POST/PUT requests due to a missing preflight response.
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isProd = process.env.NODE_ENV === "production";
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+    : [];
+
+  // Allow request origin if:
+  //  • we are in development (open to all)
+  //  • no Origin header (same-origin, curl, server-to-server)
+  //  • the origin is explicitly listed in ALLOWED_ORIGINS
+  if (!isProd || !origin || allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+  }
+
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  // Short-circuit preflight requests
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+  next();
+});
+
 // Request logging middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
+
 
 // Admin credentials configuration
 const ADMIN_ID = process.env.ADMIN_ID || "admin";

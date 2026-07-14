@@ -5,6 +5,7 @@ import {
   Terminal, Cpu, Code2, Network, Globe, Sparkles, AlertCircle, CheckCircle, RefreshCw
 } from "lucide-react";
 import Toast from "../components/Toast";
+import API_BASE from "../utils/api";
 
 // Map icon string to Lucide icon component
 const iconMap = {
@@ -60,7 +61,7 @@ export default function Admin() {
   const fetchPortfolio = async () => {
     setIsLoadingData(true);
     try {
-      const res = await fetch("/api/portfolio");
+      const res = await fetch(`${API_BASE}/api/portfolio`);
       if (res.ok) {
         const data = await res.json();
         setPortfolio(data);
@@ -83,7 +84,7 @@ export default function Admin() {
     setLoginError("");
 
     try {
-      const res = await fetch("/api/admin/login", {
+      const res = await fetch(`${API_BASE}/api/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ adminId, password })
@@ -115,7 +116,7 @@ export default function Admin() {
   const savePortfolio = async (updatedData) => {
     const token = sessionStorage.getItem("admin_token");
     try {
-      const res = await fetch("/api/portfolio", {
+      const res = await fetch(`${API_BASE}/api/portfolio`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

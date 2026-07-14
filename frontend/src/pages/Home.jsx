@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Code, Link as LinkIcon } from "lucide-react";
+import API_BASE from "../utils/api";
 
 export default function Home() {
   const [banner, setBanner] = useState({
@@ -13,7 +14,7 @@ export default function Home() {
   });
 
   useEffect(() => {
-    fetch("/api/portfolio")
+    fetch(`${API_BASE}/api/portfolio`)
       .then((res) => {
         if (res.ok) return res.json();
         throw new Error("Failed to load");

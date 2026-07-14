@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, Share2, Send, ArrowRight } from "lucide-react";
 import Toast from "../components/Toast";
+import API_BASE from "../utils/api";
 
 export default function Contact() {
   const formRef = useRef(null);
@@ -19,7 +20,7 @@ export default function Contact() {
   });
 
   useEffect(() => {
-    fetch("/api/config/emailjs")
+    fetch(`${API_BASE}/api/config/emailjs`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load email config from server");
         return res.json();

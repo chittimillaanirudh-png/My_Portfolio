@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Terminal, Cpu, Code2, Network, Globe, Sparkles } from "lucide-react";
+import API_BASE from "../utils/api";
 
 const iconMap = {
   Terminal,
@@ -64,7 +65,7 @@ export default function Skills() {
   ]);
 
   useEffect(() => {
-    fetch("/api/portfolio")
+    fetch(`${API_BASE}/api/portfolio`)
       .then((res) => {
         if (res.ok) return res.json();
         throw new Error("Failed to load");
