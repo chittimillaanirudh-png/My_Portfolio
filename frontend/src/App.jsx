@@ -7,7 +7,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ParticleBg from "./components/ParticleBg";
 import TimeDisplay from "./components/TimeDisplay";
-import ScrollToTop from "./components/ScrollToTop";
 import LoadingScreen from "./components/LoadingScreen";
 import TorchTransition from "./components/TorchTransition";
 import CustomCursor from "./components/CustomCursor";
@@ -71,10 +70,6 @@ export default function App() {
               </Routes>
             </AnimatePresence>
           </main>
-
-          {/* Back to top scroll widget */}
-          <ScrollToTop />
-
           {/* Master Layout Footing */}
           <Footer />
         </div>

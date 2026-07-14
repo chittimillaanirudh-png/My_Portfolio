@@ -8,11 +8,12 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
-    port: 3000,
-    strictPort: true,
+    proxy: {
+      '/api': 'http://localhost:3000'
+    }
   },
   build: {
-    outDir: '../dist',
+    outDir: 'dist',
     emptyOutDir: true,
   },
 });

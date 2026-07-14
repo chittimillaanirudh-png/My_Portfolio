@@ -9,6 +9,13 @@ import jwt from "jsonwebtoken";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load environment variables from .env file if it exists
+try {
+  process.loadEnvFile(path.resolve(__dirname, "../.env"));
+} catch (err) {
+  // .env file might not exist in production, which is fine
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -62,7 +69,21 @@ const PortfolioSchema = new mongoose.Schema({
 const Portfolio = mongoose.models.Portfolio || mongoose.model("Portfolio", PortfolioSchema);
 
 // Setup MongoDB connection if MONGODB_URI is provided
-const MONGODB_URI = process.env.MONGODB_URI;
+let MONGODB_URI = process.env.MONGODB_URI;
+if (MONGODB_URI) {
+  // Fix accidental angle brackets around password
+  MONGODB_URI = MONGODB_URI.replace(/<([^>]+)>/g, '$1');
+}
+
+// Workaround for local Windows DNS issues blocking SRV queries (querySrv ECONNREFUSED)
+if (process.env.NODE_ENV !== "production") {
+  try {
+    const dns = await import("dns");
+    dns.setServers(["8.8.8.8", "8.8.4.4"]);
+  } catch (err) {
+    // Ignore DNS override errors
+  }
+}
 
 if (MONGODB_URI) {
   mongoose.connect(MONGODB_URI, {
@@ -230,7 +251,7 @@ if (process.env.NODE_ENV !== "production") {
   app.use(vite.middlewares);
 } else {
   // Serve static built frontend folder in production
-  app.use(express.static(path.join(__dirname, "../dist")));
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 }
 
 // Fallback index.html for Single Page Application client-side routing
@@ -245,7 +266,7 @@ app.get("*", async (req, res, next) => {
       template = await vite.transformIndexHtml(url, template);
     } else {
       // Read index.html from dist for production
-      template = fs.readFileSync(path.resolve(__dirname, "../dist/index.html"), "utf-8");
+      template = fs.readFileSync(path.resolve(__dirname, "../frontend/dist/index.html"), "utf-8");
     }
 
     res.status(200).set({ "Content-Type": "text/html" }).end(template);

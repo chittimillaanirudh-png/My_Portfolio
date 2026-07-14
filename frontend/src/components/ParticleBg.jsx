@@ -45,9 +45,20 @@ export default function ParticleBg() {
       mouse.active = false;
     };
 
+    const handleMouseClick = (e) => {
+      waves.push({
+        x: e.clientX,
+        y: e.clientY,
+        radius: 0,
+        speed: 12,
+        maxRadius: 600
+      });
+    };
+
     if (!isMobile) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseleave", handleMouseLeave);
+      window.addEventListener("click", handleMouseClick);
     }
 
     class Particle {
@@ -58,12 +69,12 @@ export default function ParticleBg() {
         if (this.type === 0) {
           this.baseRadius = 250 + (Math.random() * 60 - 30);
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = (Math.random() * 0.005 + 0.0075);
+          this.speed = (Math.random() * 0.0015 + 0.002);
           this.baseSize = Math.random() * 0.8 + 0.4;
         } else if (this.type === 1) {
           this.baseRadius = 150 + (Math.random() * 40 - 20);
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = -(Math.random() * 0.004 + 0.006);
+          this.speed = -(Math.random() * 0.0015 + 0.002);
           this.baseSize = Math.random() * 0.6 + 0.3;
         } else {
           this.x = Math.random() * width;
@@ -77,13 +88,12 @@ export default function ParticleBg() {
         this.currentY = 0;
         this.offsetX = 0;
         this.offsetY = 0;
-        this.glow = 0;
         this.opacity = 0.6;
       }
 
       update() {
-        this.offsetX += (0 - this.offsetX) * 0.1;
-        this.offsetY += (0 - this.offsetY) * 0.1;
+        this.offsetX += (0 - this.offsetX) * 0.08;
+        this.offsetY += (0 - this.offsetY) * 0.08;
 
         if (this.type === 0 || this.type === 1) {
           this.angle += this.speed;
@@ -91,6 +101,41 @@ export default function ParticleBg() {
           this.x = centerX + Math.cos(this.angle) * (this.baseRadius * scale);
           this.y = centerY + Math.sin(this.angle) * (this.baseRadius * scale);
         } else {
+          // Type 2 particles (free floating) attract to cursor smoothly
+          if (!isMobile && mouse.active && mouse.x !== null) {
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 300) {
+              // Black hole effect: merge and disappear at center
+              if (dist < 15) {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.opacity = 0; // Will fade back in smoothly
+              } else {
+                const force = (300 - dist) / 300;
+                // Stronger gravity as it gets closer
+                const gravity = force * force * 0.15;
+                this.vx += (dx / dist) * gravity;
+                this.vy += (dy / dist) * gravity;
+              }
+            }
+          }
+          
+          // Apply friction for smoothness
+          this.vx *= 0.96;
+          this.vy *= 0.96;
+          
+          // Maintain a small minimum random drift if slowing down too much
+          const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+          if (currentSpeed < 0.2) {
+            this.vx += (Math.random() - 0.5) * 0.03;
+            this.vy += (Math.random() - 0.5) * 0.03;
+          }
+
           this.x += this.vx;
           this.y += this.vy;
           if (this.x < 0) this.x = width;
@@ -99,11 +144,34 @@ export default function ParticleBg() {
           if (this.y > height) this.y = 0;
         }
 
-        this.currentX = this.x + this.offsetX;
-        this.currentY = this.y + this.offsetY;
+        // Apply invisible wind waves physical force to particles
+        for (let i = 0; i < waves.length; i++) {
+          let wave = waves[i];
+          const dx = this.x - wave.x;
+          const dy = this.y - wave.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (Math.abs(dist - wave.radius) < 50) {
+            const force = (50 - Math.abs(dist - wave.radius)) / 50;
+            if (this.type === 0 || this.type === 1) {
+              this.offsetX += (dx / dist) * force * 8;
+              this.offsetY += (dy / dist) * force * 8;
+            } else {
+              this.vx += (dx / dist) * force * 2.5;
+              this.vy += (dy / dist) * force * 2.5;
+            }
+          }
+        }
+
+        if (this.type === 0 || this.type === 1) {
+          this.currentX = this.x + this.offsetX;
+          this.currentY = this.y + this.offsetY;
+        } else {
+          this.currentX = this.x;
+          this.currentY = this.y;
+        }
 
         let targetOpacity = 0.4;
-        let targetGlow = 0;
 
         if (!isMobile && mouse.active && mouse.x !== null) {
           const dx = this.currentX - mouse.x;
@@ -111,34 +179,24 @@ export default function ParticleBg() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 150) {
             targetOpacity = 0.8;
-            targetGlow = 10;
           }
         }
 
         this.opacity += (targetOpacity - this.opacity) * 0.1;
-        this.glow += (targetGlow - this.glow) * 0.1;
-
-        if (this.glow < 0.5) this.glow = 0;
       }
 
       draw() {
         ctx.beginPath();
-        if (this.glow > 0) {
-          ctx.shadowBlur = this.glow;
-          ctx.shadowColor = this.color;
-        } else {
-          ctx.shadowBlur = 0;
-        }
         ctx.fillStyle = this.color;
         ctx.globalAlpha = Math.max(0, Math.min(1, this.opacity));
         ctx.arc(this.currentX, this.currentY, this.baseSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
-        ctx.shadowBlur = 0;
       }
     }
 
     let particles = [];
+    let waves = [];
     const countMultiplier = isMobile ? 0.35 : 1;
 
     for (let i = 0; i < Math.floor(1235 * countMultiplier); i++) particles.push(new Particle(0));
@@ -149,6 +207,14 @@ export default function ParticleBg() {
 
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
+
+      // Update invisible wave radii
+      for (let i = waves.length - 1; i >= 0; i--) {
+        waves[i].radius += waves[i].speed;
+        if (waves[i].radius > waves[i].maxRadius) {
+          waves.splice(i, 1);
+        }
+      }
 
       particles.forEach((p) => {
         p.update();
@@ -166,6 +232,7 @@ export default function ParticleBg() {
       if (!isMobile) {
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("mouseleave", handleMouseLeave);
+        window.removeEventListener("click", handleMouseClick);
       }
     };
   }, []);
