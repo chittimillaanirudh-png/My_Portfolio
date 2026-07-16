@@ -313,7 +313,11 @@ app.get("*", async (req, res, next) => {
   }
 });
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server is running at http://0.0.0.0:${PORT} in ${process.env.NODE_ENV || "development"} mode`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server is running at http://0.0.0.0:${PORT} in ${process.env.NODE_ENV || "development"} mode`);
+  });
+}
+
+export default app;
 
