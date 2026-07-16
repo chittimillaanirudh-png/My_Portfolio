@@ -67,7 +67,7 @@ export default function Home() {
             <img
               alt="Professional portrait of Anirudh"
               src={banner.imageUrl}
-              className="relative z-10 filter grayscale brightness-90 hover:grayscale-0 transition-all duration-700 max-h-[480px] object-contain mx-auto"
+              className="relative z-10 filter grayscale brightness-90 hover:grayscale-0 transition-all duration-700 w-full h-auto max-h-[600px] object-contain lg:ml-auto lg:translate-x-8"
             />
           </motion.div>
         </div>

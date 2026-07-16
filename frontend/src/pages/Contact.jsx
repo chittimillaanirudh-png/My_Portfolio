@@ -54,6 +54,17 @@ export default function Contact() {
 
     setIsSubmitting(true);
 
+    // Save to backend database for admin panel
+    fetch(`${API_BASE}/api/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.user_name,
+        email: formData.user_email,
+        message: formData.message
+      })
+    }).catch(err => console.error("Failed to save to backend:", err));
+
     // Call window.emailjs directly (loaded via CDN in index.html)
     if (window.emailjs) {
       window.emailjs.init(emailConfig.publicKey);

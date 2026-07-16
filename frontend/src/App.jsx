@@ -18,6 +18,7 @@ import Skills from "./pages/Skills";
 import Projects from "./pages/Projects";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
+import Experience from "./pages/Experience";
 
 export default function App() {
   const [isLoadingComplete, setIsLoadingComplete] = useState(false);
@@ -59,6 +60,9 @@ export default function App() {
                 
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects.html" element={<Navigate to="/projects" replace />} />
+                
+                <Route path="/experience" element={<Experience />} />
+                <Route path="/experience.html" element={<Navigate to="/experience" replace />} />
                 
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/contact.html" element={<Navigate to="/contact" replace />} />

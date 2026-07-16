@@ -37,15 +37,22 @@ export default function Admin() {
       imageUrl: ""
     },
     skills: [],
-    projects: []
+    projects: [],
+    about: { title: "", description: "", mission: "", locationCurrent: "", locationNative: "" },
+    experience: [],
+    contactMessages: []
   });
 
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [toast, setToast] = useState(null);
 
   // Modals / Editors State
-  const [editingSkill, setEditingSkill] = useState(null); // null or skill object being added/edited
-  const [editingProject, setEditingProject] = useState(null); // null or project object being added/edited
+  const [editingSkill, setEditingSkill] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
+  const [editingExperience, setEditingExperience] = useState(null);
+  
+  // Custom Confirmation Modal State
+  const [confirmDelete, setConfirmDelete] = useState(null); // { type, id, name }
 
   useEffect(() => {
     // Check session
@@ -196,16 +203,13 @@ export default function Admin() {
   };
 
   const handleDeleteSkill = async (id) => {
-    if (window.confirm("Are you sure you want to delete this skill?")) {
-      const updatedSkills = portfolio.skills.filter(s => s.id !== id);
-      const updatedPortfolio = { ...portfolio, skills: updatedSkills };
-      await savePortfolio(updatedPortfolio);
-    }
+    setConfirmDelete({ type: "skill", id, name: "this skill" });
   };
 
   // Project Handlers
   const handleAddProjectInit = () => {
     setEditingProject({
+      id: "",
       title: "",
       subtitle: "",
       category: "Live Project",
@@ -227,13 +231,19 @@ export default function Admin() {
     }
 
     let updatedProjects = [...portfolio.projects];
-    // Find by title as unique identifier for this client demo list
-    const index = updatedProjects.findIndex(p => p.title === editingProject.title);
+    let index = -1;
+    if (editingProject.id) {
+      index = updatedProjects.findIndex(p => p.id === editingProject.id);
+    } else {
+      index = updatedProjects.findIndex(p => p.title === editingProject.title);
+    }
+
+    const projectToSave = { ...editingProject, id: editingProject.id || Date.now().toString() };
 
     if (index >= 0) {
-      updatedProjects[index] = editingProject;
+      updatedProjects[index] = projectToSave;
     } else {
-      updatedProjects.push(editingProject);
+      updatedProjects.push(projectToSave);
     }
 
     const updatedPortfolio = { ...portfolio, projects: updatedProjects };
@@ -243,11 +253,88 @@ export default function Admin() {
     }
   };
 
-  const handleDeleteProject = async (title) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
-      const updatedProjects = portfolio.projects.filter(p => p.title !== title);
-      const updatedPortfolio = { ...portfolio, projects: updatedProjects };
-      await savePortfolio(updatedPortfolio);
+  const handleDeleteProject = async (id) => {
+    setConfirmDelete({ type: "project", id, name: "this project" });
+  };
+
+  // Experience Handlers
+  const handleAddExperienceInit = () => {
+    setEditingExperience({
+      id: "",
+      role: "",
+      company: "",
+      duration: "",
+      description: ""
+    });
+  };
+
+  const handleEditExperienceInit = (exp) => {
+    setEditingExperience({ ...exp });
+  };
+
+  const handleSaveExperience = async () => {
+    if (!editingExperience.role || !editingExperience.company) {
+      setToast({ message: "Please fill out role and company", type: "error" });
+      return;
+    }
+
+    let updatedExp = [...(portfolio.experience || [])];
+    let index = -1;
+    if (editingExperience.id) {
+      index = updatedExp.findIndex(e => e.id === editingExperience.id);
+    }
+
+    const expToSave = { ...editingExperience, id: editingExperience.id || Date.now().toString() };
+
+    if (index >= 0) {
+      updatedExp[index] = expToSave;
+    } else {
+      updatedExp.push(expToSave);
+    }
+
+    const updatedPortfolio = { ...portfolio, experience: updatedExp };
+    const success = await savePortfolio(updatedPortfolio);
+    if (success) {
+      setEditingExperience(null);
+    }
+  };
+
+  const handleDeleteExperience = async (id) => {
+    setConfirmDelete({ type: "experience", id, name: "this experience entry" });
+  };
+
+  // About Handlers
+  const handleAboutChange = (field, value) => {
+    setPortfolio({
+      ...portfolio,
+      about: {
+        ...portfolio.about,
+        [field]: value
+      }
+    });
+  };
+
+  const handleSaveAbout = async () => {
+    await savePortfolio(portfolio);
+  };
+
+  // General Delete Confirmation
+  const confirmDeleteAction = async () => {
+    if (!confirmDelete) return;
+    
+    let updatedPortfolio = { ...portfolio };
+    
+    if (confirmDelete.type === "skill") {
+      updatedPortfolio.skills = portfolio.skills.filter(s => s.id !== confirmDelete.id);
+    } else if (confirmDelete.type === "project") {
+      updatedPortfolio.projects = portfolio.projects.filter(p => p.id !== confirmDelete.id);
+    } else if (confirmDelete.type === "experience") {
+      updatedPortfolio.experience = portfolio.experience.filter(e => e.id !== confirmDelete.id);
+    }
+
+    const success = await savePortfolio(updatedPortfolio);
+    if (success) {
+      setConfirmDelete(null);
     }
   };
 
@@ -386,7 +473,7 @@ export default function Admin() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-outline-variant/10 pb-4 mb-8 font-headline text-xs tracking-widest uppercase">
+      <div className="flex gap-4 border-b border-outline-variant/10 pb-4 mb-8 font-headline text-xs tracking-widest uppercase overflow-x-auto whitespace-nowrap">
         <button
           onClick={() => setActiveTab("banner")}
           className={`pb-2 px-4 transition-all duration-300 relative ${
@@ -395,6 +482,17 @@ export default function Admin() {
         >
           Hero Banner
           {activeTab === "banner" && (
+            <motion.div layoutId="tab-line" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ff8a7a]" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab("about")}
+          className={`pb-2 px-4 transition-all duration-300 relative ${
+            activeTab === "about" ? "text-[#ff8a7a]" : "text-[#acabaa] hover:text-[#ff8a7a]"
+          }`}
+        >
+          About
+          {activeTab === "about" && (
             <motion.div layoutId="tab-line" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ff8a7a]" />
           )}
         </button>
@@ -410,6 +508,17 @@ export default function Admin() {
           )}
         </button>
         <button
+          onClick={() => setActiveTab("experience")}
+          className={`pb-2 px-4 transition-all duration-300 relative ${
+            activeTab === "experience" ? "text-[#ff8a7a]" : "text-[#acabaa] hover:text-[#ff8a7a]"
+          }`}
+        >
+          Experience
+          {activeTab === "experience" && (
+            <motion.div layoutId="tab-line" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ff8a7a]" />
+          )}
+        </button>
+        <button
           onClick={() => setActiveTab("projects")}
           className={`pb-2 px-4 transition-all duration-300 relative ${
             activeTab === "projects" ? "text-[#ff8a7a]" : "text-[#acabaa] hover:text-[#ff8a7a]"
@@ -417,6 +526,17 @@ export default function Admin() {
         >
           Projects
           {activeTab === "projects" && (
+            <motion.div layoutId="tab-line" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ff8a7a]" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab("messages")}
+          className={`pb-2 px-4 transition-all duration-300 relative ${
+            activeTab === "messages" ? "text-[#ff8a7a]" : "text-[#acabaa] hover:text-[#ff8a7a]"
+          }`}
+        >
+          Messages
+          {activeTab === "messages" && (
             <motion.div layoutId="tab-line" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#ff8a7a]" />
           )}
         </button>
@@ -883,7 +1003,7 @@ export default function Admin() {
                         <span>Edit</span>
                       </button>
                       <button
-                        onClick={() => handleDeleteProject(project.title)}
+                        onClick={() => handleDeleteProject(project.id || project.title)}
                         className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high border border-outline-variant/20 text-primary hover:text-white hover:border-[#ff8e7f] text-xs font-headline tracking-widest uppercase transition-colors"
                       >
                         <Trash2 size={14} />
@@ -895,8 +1015,325 @@ export default function Admin() {
               </div>
             </motion.div>
           )}
+
+          {/* TAB 4: ABOUT PAGE */}
+          {activeTab === "about" && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8 max-w-4xl"
+            >
+              <div className="bg-surface-variant/40 backdrop-blur-md border border-outline-variant/10 p-8 rounded-3xl space-y-6">
+                <h3 className="text-lg font-headline font-light uppercase tracking-widest text-on-surface mb-2">
+                  Edit About Page Content
+                </h3>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                    Main Title
+                  </label>
+                  <input
+                    type="text"
+                    value={portfolio.about?.title || ""}
+                    onChange={(e) => handleAboutChange("title", e.target.value)}
+                    className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                    About Description (Paragraphs)
+                  </label>
+                  <textarea
+                    rows={6}
+                    value={portfolio.about?.description || ""}
+                    onChange={(e) => handleAboutChange("description", e.target.value)}
+                    className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50 resize-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                    Mission Statement
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={portfolio.about?.mission || ""}
+                    onChange={(e) => handleAboutChange("mission", e.target.value)}
+                    className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50 resize-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                    About Page Image URL
+                  </label>
+                  <input
+                    type="text"
+                    value={portfolio.about?.imageUrl || ""}
+                    onChange={(e) => handleAboutChange("imageUrl", e.target.value)}
+                    className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                      Current Location
+                    </label>
+                    <input
+                      type="text"
+                      value={portfolio.about?.locationCurrent || ""}
+                      onChange={(e) => handleAboutChange("locationCurrent", e.target.value)}
+                      className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                      Native Place
+                    </label>
+                    <input
+                      type="text"
+                      value={portfolio.about?.locationNative || ""}
+                      onChange={(e) => handleAboutChange("locationNative", e.target.value)}
+                      className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <button
+                    onClick={handleSaveAbout}
+                    className="flex items-center gap-2 px-8 py-4 bg-transparent rounded-full border border-outline-variant/30 text-on-surface font-headline uppercase text-xs tracking-widest hover:border-[#ff8a7a] hover:text-[#ff8a7a] hover:shadow-[0_0_15px_-2px_#ff8e7f] transition-all duration-300"
+                  >
+                    <Save size={16} />
+                    <span>Save About Content</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 5: EXPERIENCE PAGE */}
+          {activeTab === "experience" && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8"
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-headline font-light uppercase tracking-widest text-[#acabaa]">
+                  Manage Experience
+                </h3>
+                <button
+                  onClick={handleAddExperienceInit}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-transparent border border-secondary/20 text-[#c0ee91] hover:border-[#c0ee91] hover:shadow-[0_0_15px_-2px_#c0ee91] transition-all duration-300 text-xs uppercase tracking-widest font-headline"
+                >
+                  <Plus size={16} />
+                  <span>Add Experience</span>
+                </button>
+              </div>
+
+              {/* Editing Experience Frame */}
+              {editingExperience && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="bg-surface-container-low border border-[#ff8a7a]/20 p-8 rounded-3xl space-y-6"
+                >
+                  <h4 className="text-md font-headline text-[#ff8a7a] uppercase tracking-widest">
+                    {editingExperience.role ? `Edit Experience: ${editingExperience.role}` : "Add New Experience"}
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                        Role / Title
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Frontend Developer"
+                        value={editingExperience.role}
+                        onChange={(e) => setEditingExperience({ ...editingExperience, role: e.target.value })}
+                        className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                        Company / Organization
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Google"
+                        value={editingExperience.company}
+                        onChange={(e) => setEditingExperience({ ...editingExperience, company: e.target.value })}
+                        className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                        Duration
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Jan 2024 - Present"
+                        value={editingExperience.duration}
+                        onChange={(e) => setEditingExperience({ ...editingExperience, duration: e.target.value })}
+                        className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50"
+                      />
+                    </div>
+                    <div className="col-span-1 md:col-span-2 space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest text-[#acabaa] font-headline ml-1">
+                        Description
+                      </label>
+                      <textarea
+                        rows={4}
+                        placeholder="Describe your responsibilities and achievements..."
+                        value={editingExperience.description}
+                        onChange={(e) => setEditingExperience({ ...editingExperience, description: e.target.value })}
+                        className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-[#ff8a7a]/50 resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 pt-2">
+                    <button
+                      onClick={handleSaveExperience}
+                      className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#ff8a7a]/10 border border-[#ff8a7a]/30 text-[#ff8a7a] hover:bg-[#ff8a7a] hover:text-black transition-all duration-300 text-xs uppercase tracking-widest font-headline"
+                    >
+                      <Save size={14} />
+                      <span>Save Experience</span>
+                    </button>
+                    <button
+                      onClick={() => setEditingExperience(null)}
+                      className="flex items-center gap-2 px-6 py-3 rounded-full bg-transparent border border-outline-variant/20 text-on-surface-variant hover:text-white transition-all duration-300 text-xs uppercase tracking-widest font-headline"
+                    >
+                      <span>Cancel</span>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Experience List View */}
+              <div className="space-y-6">
+                {(portfolio.experience || []).map((exp, idx) => (
+                  <div
+                    key={idx}
+                    className="p-6 rounded-2xl bg-surface-variant/20 border border-outline-variant/10 flex flex-col md:flex-row justify-between gap-6 hover:border-outline-variant/30 transition-colors"
+                  >
+                    <div className="space-y-2">
+                      <h4 className="font-headline text-xl font-light">{exp.role}</h4>
+                      <p className="text-xs text-[#acabaa] font-body tracking-wider uppercase">
+                        {exp.company} • {exp.duration}
+                      </p>
+                      <p className="text-xs text-on-surface-variant font-light line-clamp-2 max-w-xl font-body">
+                        {exp.description}
+                      </p>
+                    </div>
+                    <div className="flex md:flex-col justify-end gap-3 self-center shrink-0">
+                      <button
+                        onClick={() => handleEditExperienceInit(exp)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high border border-outline-variant/20 text-secondary hover:text-white hover:border-[#c0ee91] text-xs font-headline tracking-widest uppercase transition-colors"
+                      >
+                        <Edit3 size={14} />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteExperience(exp.id)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high border border-outline-variant/20 text-primary hover:text-white hover:border-[#ff8e7f] text-xs font-headline tracking-widest uppercase transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 6: CONTACT MESSAGES */}
+          {activeTab === "messages" && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8"
+            >
+              <h3 className="text-lg font-headline font-light uppercase tracking-widest text-[#acabaa]">
+                Contact Messages
+              </h3>
+              <div className="space-y-6">
+                {(portfolio.contactMessages || []).slice().reverse().map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className="p-6 rounded-2xl bg-surface-variant/20 border border-outline-variant/10 hover:border-outline-variant/30 transition-colors"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h4 className="font-headline text-lg font-medium text-on-surface">{msg.name}</h4>
+                        <a href={`mailto:${msg.email}`} className="text-sm text-secondary hover:underline font-body">{msg.email}</a>
+                      </div>
+                      <span className="text-[10px] text-on-surface-variant font-mono">
+                        {new Date(msg.date).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-on-surface-variant font-light whitespace-pre-wrap font-body text-sm bg-surface-container p-4 rounded-xl">
+                      {msg.message}
+                    </p>
+                  </div>
+                ))}
+                {(!portfolio.contactMessages || portfolio.contactMessages.length === 0) && (
+                  <p className="text-on-surface-variant text-sm italic">No messages received yet.</p>
+                )}
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       )}
+      
+      {/* Custom Delete Confirmation Modal */}
+      <AnimatePresence>
+        {confirmDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-surface-container-high border border-primary/30 p-8 rounded-3xl max-w-sm w-full shadow-2xl shadow-primary/10"
+            >
+              <div className="flex items-center gap-4 mb-6 text-primary">
+                <AlertCircle size={32} />
+                <h3 className="text-xl font-headline uppercase tracking-widest">Confirm Deletion</h3>
+              </div>
+              <p className="text-on-surface-variant font-body mb-8">
+                Are you sure you want to delete {confirmDelete.name}? This action cannot be undone.
+              </p>
+              <div className="flex gap-4 justify-end">
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  className="px-6 py-2 rounded-full border border-outline-variant/20 text-on-surface-variant hover:text-white transition-colors text-xs font-headline uppercase tracking-widest"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteAction}
+                  className="px-6 py-2 rounded-full bg-primary/20 text-primary border border-primary/30 hover:bg-primary hover:text-black transition-colors text-xs font-headline uppercase tracking-widest"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

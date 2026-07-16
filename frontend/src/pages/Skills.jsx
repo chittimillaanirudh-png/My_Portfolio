@@ -164,29 +164,6 @@ export default function Skills() {
         })}
       </motion.section>
 
-      {/* Footer Banner */}
-      <section className="mt-32 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative w-full h-[400px] rounded-2xl overflow-hidden bg-surface-container-low border border-outline-variant/5"
-        >
-          <img
-            className="w-full h-full object-cover opacity-40 mix-blend-luminosity"
-            alt="Futuristic neural network banner"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBU4EVBgo1w7Fe1MDOmiZa01aOht1Btmyf30iYQPaZUhFvXYZqL8Nvm_gyNeTnbFZP949JaHBcSGP5l0DtTIXpFLoMcVx-Gh_NnaQn20uukRQvN5BZZ3YckxvSFd0NFOKSccF5MBrRrAICIUAo7UmUBDJI1dbAVQAnHcMdmF-ey_sWU6_FCSs7Uipwdf3mj6OOtudBCL5WR_bTsoYIv8i0DBpAXI-IJSN7YZrtFMS5RPjh3Panl9fXwHvQKWWaCX1HXLUyJb3vUqKnC"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
-          <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8">
-            <Sparkles className="text-secondary mb-6 animate-pulse" size={48} />
-            <h2 className="font-headline text-3xl md:text-5xl font-extralight text-on-surface tracking-tighter max-w-2xl leading-tight">
-              Architecture of the <span className="text-primary italic">Digital Frontier</span>
-            </h2>
-          </div>
-        </motion.div>
-      </section>
     </motion.div>
   );
 }

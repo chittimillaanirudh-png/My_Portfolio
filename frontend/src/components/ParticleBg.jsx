@@ -65,17 +65,28 @@ export default function ParticleBg() {
       constructor(type) {
         this.type = type;
         this.color = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Simple normal distribution function
+        const randomGaussian = () => {
+          let u = 0, v = 0;
+          while(u === 0) u = Math.random();
+          while(v === 0) v = Math.random();
+          return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+        };
 
         if (this.type === 0) {
-          this.baseRadius = 250 + (Math.random() * 60 - 30);
+          this.baseRadius = 280 + randomGaussian() * 15;
+          // Create scattered particles further away
+          if (Math.random() > 0.8) this.baseRadius += randomGaussian() * 40;
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = (Math.random() * 0.0015 + 0.002);
-          this.baseSize = Math.random() * 0.8 + 0.4;
+          this.speed = (Math.random() * 0.001 + 0.001);
+          this.baseSize = Math.random() * 1.2 + 0.5;
         } else if (this.type === 1) {
-          this.baseRadius = 150 + (Math.random() * 40 - 20);
+          this.baseRadius = 180 + randomGaussian() * 12;
+          if (Math.random() > 0.8) this.baseRadius += randomGaussian() * 30;
           this.angle = Math.random() * Math.PI * 2;
-          this.speed = -(Math.random() * 0.0015 + 0.002);
-          this.baseSize = Math.random() * 0.6 + 0.3;
+          this.speed = -(Math.random() * 0.001 + 0.001);
+          this.baseSize = Math.random() * 1.0 + 0.4;
         } else {
           this.x = Math.random() * width;
           this.y = Math.random() * height;
@@ -89,6 +100,11 @@ export default function ParticleBg() {
         this.offsetX = 0;
         this.offsetY = 0;
         this.opacity = 0.6;
+
+        // Blinking properties
+        this.isBlinking = false;
+        this.blinkTimer = 0;
+        this.blinkSpeed = 0;
       }
 
       update() {
@@ -183,15 +199,45 @@ export default function ParticleBg() {
         }
 
         this.opacity += (targetOpacity - this.opacity) * 0.1;
+
+        // Handle blinking
+        if (!this.isBlinking && Math.random() < 0.0005) {
+          this.isBlinking = true;
+          this.blinkTimer = 0;
+          this.blinkSpeed = Math.random() * 0.05 + 0.02;
+        }
+
+        if (this.isBlinking) {
+          this.blinkTimer += this.blinkSpeed;
+          if (this.blinkTimer >= Math.PI) {
+            this.isBlinking = false;
+            this.blinkTimer = 0;
+          }
+        }
       }
 
       draw() {
+        let currentOpacity = Math.max(0, Math.min(1, this.opacity));
+        let currentSize = this.baseSize;
+
+        if (this.isBlinking) {
+          const blinkPulse = Math.sin(this.blinkTimer);
+          currentOpacity = Math.min(1, currentOpacity + blinkPulse * 0.6);
+          currentSize += blinkPulse * 0.75;
+          
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = this.color;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+
         ctx.beginPath();
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = Math.max(0, Math.min(1, this.opacity));
-        ctx.arc(this.currentX, this.currentY, this.baseSize, 0, Math.PI * 2);
+        ctx.globalAlpha = currentOpacity;
+        ctx.arc(this.currentX, this.currentY, currentSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
       }
     }
 

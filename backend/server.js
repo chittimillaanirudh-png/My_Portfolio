@@ -92,6 +92,7 @@ const PortfolioSchema = new mongoose.Schema({
   ],
   projects: [
     {
+      id: String,
       title: String,
       subtitle: String,
       category: String,
@@ -99,6 +100,31 @@ const PortfolioSchema = new mongoose.Schema({
       image: String,
       tags: [String],
       link: String
+    }
+  ],
+  about: {
+    title: String,
+    description: String,
+    mission: String,
+    locationCurrent: String,
+    locationNative: String
+  },
+  experience: [
+    {
+      id: String,
+      role: String,
+      company: String,
+      duration: String,
+      description: String
+    }
+  ],
+  contactMessages: [
+    {
+      id: String,
+      name: String,
+      email: String,
+      message: String,
+      date: { type: Date, default: Date.now }
     }
   ]
 }, { timestamps: true, collection: "portfolio" });
@@ -153,7 +179,7 @@ function getLocalPortfolioData() {
   } catch (err) {
     console.error("Error reading local portfolio data file:", err);
   }
-  return { homeBanner: {}, skills: [], projects: [] };
+  return { homeBanner: {}, skills: [], projects: [], about: {}, experience: [], contactMessages: [] };
 }
 
 // Helper to write portfolio data safely to local file
@@ -190,15 +216,9 @@ async function getPortfolioData() {
 async function savePortfolioData(newData) {
   if (mongoose.connection.readyState === 1) {
     try {
-      let doc = await Portfolio.findOne();
-      if (doc) {
-        doc.homeBanner = newData.homeBanner;
-        doc.skills = newData.skills;
-        doc.projects = newData.projects;
-        await doc.save();
-      } else {
-        await Portfolio.create(newData);
-      }
+      // Completely replace the existing portfolio data to prevent array bloat/stale data accumulation
+      await Portfolio.deleteMany({});
+      await Portfolio.create(newData);
     } catch (err) {
       console.error("Error saving portfolio data to MongoDB:", err);
       throw err;
@@ -273,6 +293,42 @@ app.post("/api/portfolio", async (req, res) => {
   } catch (err) {
     console.error("Failed to save portfolio data:", err);
     res.status(500).json({ error: "Failed to save portfolio data" });
+  }
+});
+
+// Endpoint to save contact messages
+app.post("/api/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+
+  const newMessage = {
+    id: Date.now().toString(),
+    name,
+    email,
+    message,
+    date: new Date()
+  };
+
+  try {
+    const portfolio = await getPortfolioData();
+    if (!portfolio.contactMessages) {
+      portfolio.contactMessages = [];
+    }
+    // We add to array if it is mongoose doc, or plain object
+    if (mongoose.connection.readyState === 1 && portfolio.contactMessages && portfolio.contactMessages.push) {
+      portfolio.contactMessages.push(newMessage);
+    } else {
+       // if plain object from local fallback
+       const updatedMessages = [...(portfolio.contactMessages || []), newMessage];
+       portfolio.contactMessages = updatedMessages;
+    }
+    await savePortfolioData(portfolio);
+    res.json({ success: true, message: "Message saved successfully" });
+  } catch (err) {
+    console.error("Failed to save contact message:", err);
+    res.status(500).json({ error: "Failed to save contact message" });
   }
 });
 
