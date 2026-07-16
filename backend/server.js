@@ -288,7 +288,7 @@ if (process.env.NODE_ENV !== "production") {
   app.use(vite.middlewares);
 } else {
   // Serve static built frontend folder in production
-  app.use(express.static(path.join(__dirname, "../dist")));
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 }
 
 // Fallback index.html for Single Page Application client-side routing
@@ -303,7 +303,7 @@ app.get("*", async (req, res, next) => {
       template = await vite.transformIndexHtml(url, template);
     } else {
       // Read index.html from dist for production
-      template = fs.readFileSync(path.resolve(__dirname, "../dist/index.html"), "utf-8");
+      template = fs.readFileSync(path.resolve(__dirname, "../frontend/dist/index.html"), "utf-8");
     }
 
     res.status(200).set({ "Content-Type": "text/html" }).end(template);
