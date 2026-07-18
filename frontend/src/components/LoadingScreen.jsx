@@ -67,9 +67,12 @@ export default function Loader({ onComplete }) {
         {/* Large "AC" Logo drawing itself */}
         <div className="mb-6 flex justify-center">
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            initial={{ clipPath: "circle(0% at 50% 50%)", opacity: 0 }}
+            animate={{ clipPath: "circle(100% at 50% 50%)", opacity: 1 }}
+            transition={{ 
+              clipPath: { duration: 2.8, ease: "easeInOut" },
+              opacity: { duration: 0.6 }
+            }}
             className="relative"
           >
             <Logo className="w-28 h-28 md:w-40 md:h-40 text-ink" />
@@ -77,7 +80,7 @@ export default function Loader({ onComplete }) {
             <motion.div
               initial={{ scale: 0.2, opacity: 0 }}
               animate={{ scale: [1, 1.2, 1.1], opacity: [0.15, 0.25, 0.15] }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
+              transition={{ duration: 2.8, ease: "easeInOut" }}
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-ink rounded-full blur-2xl -z-10"
             />
           </motion.div>

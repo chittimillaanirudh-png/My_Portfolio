@@ -27,7 +27,7 @@ export default function Header() {
   return (
     <>
       <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isHome ? 'bg-transparent' : 'bg-paper/85 backdrop-blur-md navbar-fade'}`}>
-        <div className="flex justify-between items-center px-6 lg:px-12 py-5 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center px-6 lg:px-12 py-5 w-full mx-auto max-w-none">
           {/* Logo - click opens admin panel */}
           <Link
             to="/admin"
