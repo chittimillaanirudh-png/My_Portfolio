@@ -74,7 +74,21 @@ export default function Home() {
             {banner.roles}
           </motion.h2>
 
-          <motion.p variants={itemVariants} className="text-ink/80 font-inter text-base md:text-lg max-w-lg leading-relaxed mt-4">
+          {/* Portrait (Mobile only) */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="block lg:hidden w-full h-[45vh] min-h-[320px] overflow-hidden rounded-2xl border border-ink/20 mt-6 relative z-10"
+          >
+            <img
+              alt={banner.title}
+              src={banner.imageUrl}
+              className="w-full h-full object-cover object-center"
+            />
+          </motion.div>
+
+          <motion.p variants={itemVariants} className="text-ink/80 font-inter text-base md:text-lg max-w-lg leading-relaxed mt-6">
             {banner.description}
           </motion.p>
 
@@ -94,20 +108,6 @@ export default function Home() {
               Download CV
               <Download size={18} className="transform transition-transform duration-300 group-hover:translate-y-1" />
             </a>
-          </motion.div>
-
-          {/* Portrait (Mobile only) */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="block lg:hidden w-full h-[45vh] min-h-[320px] overflow-hidden rounded-2xl border border-ink/20 mt-8 relative z-10"
-          >
-            <img
-              alt={banner.title}
-              src={banner.imageUrl}
-              className="w-full h-full object-cover object-center"
-            />
           </motion.div>
         </motion.div>
 

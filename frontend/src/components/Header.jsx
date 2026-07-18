@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
@@ -6,7 +6,17 @@ import Logo from "./Logo";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -23,10 +33,11 @@ export default function Header() {
 
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const showTransparent = isHome && !isMobile;
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isHome ? 'bg-transparent' : 'bg-paper/85 backdrop-blur-md navbar-fade'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${showTransparent ? 'bg-transparent' : 'bg-paper/85 backdrop-blur-md navbar-fade'}`}>
         <div className="flex justify-between items-center px-6 lg:px-12 py-5 w-full mx-auto max-w-none">
           {/* Logo - click opens admin panel */}
           <Link
@@ -80,7 +91,7 @@ export default function Header() {
 
       {/* Mobile Drawer (Left side) */}
       <div
-        className={`fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-paper shadow-2xl z-[9999] flex flex-col items-start justify-start pt-28 gap-8 px-8 transform transition-transform duration-500 drawer-fade-left ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        className={`fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-paper z-[9999] flex flex-col items-start justify-start pt-28 gap-8 px-8 transform transition-transform duration-500 drawer-fade-left ease-[cubic-bezier(0.76,0,0.24,1)] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -101,10 +112,10 @@ export default function Header() {
         
         <button
           onClick={handleHireMe}
-          className="btn-outline px-8 py-4 rounded text-lg font-inter font-medium text-ink uppercase tracking-wide w-full mt-4 flex justify-between items-center group"
+          className="bg-ink text-paper rounded-full text-xs uppercase tracking-widest font-bebas px-6 py-3.5 w-full mt-4 flex justify-between items-center group transition-colors duration-300"
         >
-          Hire Me
-          <span className="transform transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-paper">
+          <span>Hire Me</span>
+          <span className="transform transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
             ↗
           </span>
         </button>
