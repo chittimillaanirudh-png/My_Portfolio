@@ -28,9 +28,9 @@ export default function About() {
   }, []);
 
   const stats = [
-    { icon: <Code2 size={24} strokeWidth={1.5} />, value: "2+", label: "YEARS CODING" },
-    { icon: <Laptop size={24} strokeWidth={1.5} />, value: "10+", label: "PROJECTS BUILT" },
-    { icon: <Coffee size={24} strokeWidth={1.5} />, value: "1000+", label: "HOURS LEARNING" },
+    { icon: <Code2 size={24} strokeWidth={1.5} />, value: "1+", label: "YEARS CODING" },
+    { icon: <Laptop size={24} strokeWidth={1.5} />, value: "2+", label: "PROJECTS BUILT" },
+    { icon: <Coffee size={24} strokeWidth={1.5} />, value: "500+", label: "HOURS LEARNING" },
     { icon: <Target size={24} strokeWidth={1.5} />, value: "KEEP GROWING", label: "ALWAYS IMPROVING", isString: true }
   ];
 
@@ -115,10 +115,6 @@ export default function About() {
                 <Mail size={18} className="mt-0.5 text-ink/70" />
                 <span className="font-medium tracking-wide uppercase text-xs mt-1">EMAIL</span>
                 <span className="text-ink/80">: {aboutData.email}</span>
-
-                <Phone size={18} className="mt-0.5 text-ink/70" />
-                <span className="font-medium tracking-wide uppercase text-xs mt-1">PHONE</span>
-                <span className="text-ink/80">: {aboutData.phone}</span>
               </div>
             </div>
 

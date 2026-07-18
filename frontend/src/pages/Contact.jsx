@@ -95,7 +95,7 @@ export default function Contact() {
               GET IN TOUCH
             </span>
           </div>
-          <h2 className="text-5xl md:text-7xl font-bebas leading-[0.85] tracking-tight text-ink mb-6">
+          <h2 className="text-4xl md:text-7xl font-bebas leading-[0.85] tracking-tight text-ink mb-6">
             LET'S BUILD<br />SOMETHING GREAT.
           </h2>
           <p className="text-ink/80 font-inter text-base md:text-lg leading-relaxed mb-12">

@@ -342,7 +342,7 @@ export default function Admin() {
   // Login view
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-32 pb-24 px-8 bg-paper text-ink relative">
+      <div className="min-h-screen flex items-center justify-center pt-32 pb-24 px-8 bg-transparent text-ink relative">
         <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
           <div className="absolute top-[30%] left-[25%] w-72 h-72 bg-transparent rounded-full blur-[100px]" />
           <div className="absolute top-[50%] right-[25%] w-72 h-72 bg-transparent rounded-full blur-[100px]" />
@@ -362,10 +362,10 @@ export default function Admin() {
           className="relative z-10 w-full max-w-md p-8 space-y-8"
         >
           <div className="text-center space-y-3">
-            <div className="w-16 h-16 mx-auto flex items-center justify-center">
-              <Logo className="w-16 h-16 text-ink" />
+            <div className="w-24 h-24 mx-auto flex items-center justify-center">
+              <Logo className="w-24 h-24 text-ink" />
             </div>
-            <h1 className="text-2xl font-bebas font-light uppercase tracking-widest text-ink bg-gradient-to-r from-ink via-ink to-ink">
+            <h1 className="text-2xl font-bebas font-light uppercase tracking-widest text-ink">
               Admin Authentication
             </h1>
             <p className="text-xs text-ink/60 font-inter tracking-wider uppercase">
@@ -558,7 +558,7 @@ export default function Admin() {
               exit={{ opacity: 0, y: -15 }}
               className="space-y-8 max-w-4xl"
             >
-              <div className="bg-paper backdrop-blur-md border border-ink/10 p-8 rounded-3xl space-y-6">
+              <div className="bg-paper backdrop-blur-md border border-ink/10 p-5 md:p-8 rounded-2xl space-y-6">
                 <h3 className="text-lg font-bebas font-light uppercase tracking-widest text-ink mb-2">
                   Edit Homepage Hero Banner Settings
                 </h3>
@@ -665,7 +665,7 @@ export default function Admin() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="bg-paper border border-ink/20 p-8 rounded-3xl space-y-6"
+                  className="bg-paper border border-ink/20 p-5 md:p-8 rounded-2xl space-y-6"
                 >
                   <div className="flex justify-between items-center">
                     <h4 className="text-md font-bebas text-ink font-bold uppercase tracking-widest">
@@ -847,7 +847,7 @@ export default function Admin() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="bg-paper border border-ink/20 p-8 rounded-3xl space-y-6"
+                  className="bg-paper border border-ink/20 p-5 md:p-8 rounded-2xl space-y-6"
                 >
                   <h4 className="text-md font-bebas text-ink font-bold uppercase tracking-widest">
                     {editingProject.title ? `Edit Project: ${editingProject.title}` : "Add New Project"}
@@ -1025,7 +1025,7 @@ export default function Admin() {
               exit={{ opacity: 0, y: -15 }}
               className="space-y-8 max-w-4xl"
             >
-              <div className="bg-paper backdrop-blur-md border border-ink/10 p-8 rounded-3xl space-y-6">
+              <div className="bg-paper backdrop-blur-md border border-ink/10 p-5 md:p-8 rounded-2xl space-y-6">
                 <h3 className="text-lg font-bebas font-light uppercase tracking-widest text-ink mb-2">
                   Edit About Page Content
                 </h3>
@@ -1142,7 +1142,7 @@ export default function Admin() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="bg-paper border border-ink/20 p-8 rounded-3xl space-y-6"
+                  className="bg-paper border border-ink/20 p-5 md:p-8 rounded-2xl space-y-6"
                 >
                   <h4 className="text-md font-bebas text-ink font-bold uppercase tracking-widest">
                     {editingExperience.role ? `Edit Experience: ${editingExperience.role}` : "Add New Experience"}
@@ -1308,7 +1308,7 @@ export default function Admin() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-paper border border-ink/20 p-8 rounded-3xl max-w-sm w-full shadow-2xl shadow-primary/10"
+              className="bg-paper border border-ink/20 p-5 md:p-8 rounded-2xl max-w-sm w-full shadow-2xl shadow-primary/10"
             >
               <div className="flex items-center gap-4 mb-6 text-ink">
                 <AlertCircle size={32} />

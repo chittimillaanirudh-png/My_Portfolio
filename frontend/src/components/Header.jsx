@@ -33,8 +33,8 @@ export default function Header() {
             to="/admin"
             className="text-ink hover:opacity-70 transition-opacity flex items-center gap-2 -ml-2 lg:-ml-6"
           >
-            <Logo className="w-9 h-9 md:w-13 md:h-13" />
-            <span className="font-bebas text-lg md:text-3xl tracking-wider pt-1">AC.</span>
+            <Logo className="w-9 h-9 md:w-16 md:h-16" />
+            <span className="font-bebas text-lg md:text-4xl tracking-wider pt-1">AC.</span>
           </Link>
 
           {/* Desktop Nav Items */}
@@ -90,7 +90,7 @@ export default function Header() {
             to={item.path}
             onClick={() => setIsOpen(false)}
             className={({ isActive }) =>
-              `font-bebas text-4xl tracking-wide w-full transition-all duration-300 ${
+              `font-bebas text-2xl tracking-wide w-full transition-all duration-300 ${
                 isActive ? "text-ink opacity-100" : "text-ink opacity-60 hover:opacity-100"
               }`
             }
