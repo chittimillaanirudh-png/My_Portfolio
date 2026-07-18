@@ -83,12 +83,12 @@ export default function CustomCursor() {
         const time = Date.now() * 0.0015;
         ctx.translate(cursorLerpX, cursorLerpY);
 
-        // 1. Ambient Background Glow
+        // 1. Ambient Background Glow (increased opacity)
         const haloRadius = currentRadius + (isHovering ? 18 : 12);
         const halo = ctx.createRadialGradient(0, 0, currentRadius - 10, 0, 0, haloRadius);
         halo.addColorStop(0, ringColorAlpha(0));
-        halo.addColorStop(0.3, ringColorAlpha(isHovering ? 0.08 : 0.05));
-        halo.addColorStop(0.7, ringColorAlpha(isHovering ? 0.02 : 0.01));
+        halo.addColorStop(0.3, ringColorAlpha(isHovering ? 0.25 : 0.18));
+        halo.addColorStop(0.7, ringColorAlpha(isHovering ? 0.08 : 0.05));
         halo.addColorStop(1, ringColorAlpha(0));
 
         ctx.beginPath();
@@ -96,7 +96,7 @@ export default function CustomCursor() {
         ctx.fillStyle = halo;
         ctx.fill();
 
-        // 2. Dense Energy Flow Strands
+        // 2. Dense Energy Flow Strands (significantly darker)
         const strandsCount = isHovering ? 28 : 15;
         for (let s = 0; s < strandsCount; s++) {
           ctx.beginPath();
@@ -121,8 +121,8 @@ export default function CustomCursor() {
           }
           ctx.closePath();
 
-          const strandAlpha = isHovering ? (0.15 - (s * 0.005)) : (0.12 - (s * 0.005));
-          ctx.strokeStyle = ringColorAlpha(Math.max(0.01, strandAlpha));
+          const strandAlpha = isHovering ? (0.55 - (s * 0.015)) : (0.45 - (s * 0.015));
+          ctx.strokeStyle = ringColorAlpha(Math.max(0.05, strandAlpha));
           ctx.lineWidth = 1 + (s * 0.05);
           ctx.stroke();
         }

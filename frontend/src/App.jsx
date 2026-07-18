@@ -33,8 +33,8 @@ function AppLayout() {
       {/* Persistent Standard Header Nav */}
       <Header />
 
-      {/* Core Routes Container */}
-      <main className={`flex-grow flex flex-col relative z-10 w-full max-w-7xl mx-auto ${isHomePage ? '' : 'px-6 lg:px-12'}`}>
+      {/* Main Page Layout Container */}
+      <main className="flex-grow flex flex-col relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />

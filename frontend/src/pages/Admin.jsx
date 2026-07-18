@@ -359,7 +359,7 @@ export default function Admin() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="relative z-10 w-full max-w-md bg-paper backdrop-blur-md p-8 rounded-3xl border border-ink/20 shadow-2xl space-y-8"
+          className="relative z-10 w-full max-w-md p-8 space-y-8"
         >
           <div className="text-center space-y-3">
             <div className="w-16 h-16 mx-auto flex items-center justify-center">

@@ -1,11 +1,15 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { Mail } from "lucide-react";
 
 export default function Footer() {
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
   return (
-    <footer className="w-full bg-transparent relative z-10">
+    <footer className={`w-full bg-transparent relative z-10 ${isHome ? 'lg:absolute lg:bottom-0 lg:left-0 lg:max-w-[55vw]' : ''}`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="border-t border-ink/20 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className={`border-t border-ink/20 py-8 flex flex-col md:flex-row justify-between items-center gap-6 ${isHome ? 'lg:border-t-0 lg:py-4 lg:pt-0' : ''}`}>
           <div className="flex flex-col items-center md:items-start">
             <span className="text-ink font-inter text-sm font-medium">
               © 2026 Anirudh Chittimilla. All rights reserved.

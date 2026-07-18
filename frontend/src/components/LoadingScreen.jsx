@@ -72,7 +72,7 @@ export default function Loader({ onComplete }) {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative"
           >
-            <Logo className="w-24 h-24 md:w-32 md:h-32 text-ink" />
+            <Logo className="w-28 h-28 md:w-40 md:h-40 text-ink" />
             {/* Ink spread blob animation behind the logo */}
             <motion.div
               initial={{ scale: 0.2, opacity: 0 }}

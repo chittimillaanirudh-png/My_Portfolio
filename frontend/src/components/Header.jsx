@@ -33,8 +33,8 @@ export default function Header() {
             to="/admin"
             className="text-ink hover:opacity-70 transition-opacity flex items-center gap-2 -ml-2 lg:-ml-6"
           >
-            <Logo className="w-10 h-10 md:w-11 md:h-11" />
-            <span className="font-bebas text-xl md:text-2xl tracking-wider pt-1">AC.</span>
+            <Logo className="w-9 h-9 md:w-13 md:h-13" />
+            <span className="font-bebas text-lg md:text-3xl tracking-wider pt-1">AC.</span>
           </Link>
 
           {/* Desktop Nav Items */}
