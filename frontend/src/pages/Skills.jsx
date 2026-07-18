@@ -1,169 +1,143 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Terminal, Cpu, Code2, Network, Globe, Sparkles } from "lucide-react";
+import { ArrowUpRight, Code2, Database, Terminal, Cpu, Monitor, BrainCircuit } from "lucide-react";
 import API_BASE from "../utils/api";
 
-const iconMap = {
-  Terminal,
-  Cpu,
-  Code2,
-  Network,
-  Globe,
-  Sparkles
-};
+const skillCards = [
+  {
+    icon: <div className="font-bebas text-5xl font-bold">C</div>, // Custom 'C' letter or icon
+    percentage: "90%",
+    title: "C LANGUAGE",
+    description: "Strong foundation in C programming, data structures, algorithms and problem solving.",
+    progress: 90
+  },
+  {
+    icon: <div className="w-10 h-10 border-4 border-ink rounded-full flex items-center justify-center">
+      <div className="w-4 h-4 bg-ink rounded-tl-full rounded-br-full" />
+    </div>, // Python like icon
+    percentage: "90%",
+    title: "PYTHON",
+    description: "Building efficient programs, automations and solving real-world problems with Python.",
+    progress: 90
+  },
+  {
+    icon: <div className="w-12 h-10 border-2 border-ink rounded-lg flex items-center justify-center font-bold text-xs">&lt;/&gt;</div>,
+    percentage: "90%",
+    title: "DATA STRUCTURES",
+    description: "Strong grasp of data structures and algorithms to write optimized and efficient code.",
+    progress: 90
+  },
+  {
+    icon: <div className="font-bebas text-4xl font-bold flex items-center">C<span className="text-2xl mt-1">++</span></div>,
+    percentage: "85%",
+    title: "C++",
+    description: "Object oriented programming, STL, and building efficient applications.",
+    progress: 85
+  },
+  {
+    icon: <div className="w-12 h-12 bg-ink text-paper rounded-full flex items-center justify-center font-bold text-sm">&lt;/&gt;</div>,
+    percentage: "80%",
+    title: "VIBE CODING",
+    description: "Solving problems on coding platforms and improving logic and problem solving speed.",
+    progress: 80
+  },
+  {
+    icon: <BrainCircuit size={40} strokeWidth={1.5} />,
+    percentage: "85%",
+    title: "PROMPT ENGINEERING",
+    description: "Designing effective prompts and leveraging AI models to build smart and useful solutions.",
+    progress: 85
+  }
+];
 
 export default function Skills() {
-  const [skills, setSkills] = useState([
-    {
-      id: "01",
-      title: "C",
-      desc: "Strong foundation in programming concepts, memory management, and procedural logic implementation.",
-      iconName: "Terminal",
-      color: "hover:border-primary-dim/40 hover:shadow-[0_20px_40px_rgba(238,125,110,0.05)]",
-      textColor: "text-primary"
-    },
-    {
-      id: "02",
-      title: "C++",
-      desc: "Object-oriented programming, STL mastery, and high-performance problem solving for competitive coding.",
-      iconName: "Cpu",
-      color: "hover:border-secondary/40 hover:shadow-[0_20px_40px_rgba(192,238,145,0.05)]",
-      textColor: "text-secondary"
-    },
-    {
-      id: "03",
-      title: "Python",
-      desc: "Scripting, logic building, and application development with a focus on clean, readable, and efficient code.",
-      iconName: "Code2",
-      color: "hover:border-tertiary/40 hover:shadow-[0_20px_40px_rgba(243,167,125,0.05)]",
-      textColor: "text-tertiary"
-    },
-    {
-      id: "04",
-      title: "DSA",
-      desc: "Efficient problem-solving using advanced data structures and optimized algorithms for complex challenges.",
-      iconName: "Network",
-      color: "hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(255,142,127,0.05)]",
-      textColor: "text-primary"
-    },
-    {
-      id: "05",
-      title: "Web Development",
-      desc: "Acting as a system architect to build modern, responsive web applications. Creating highly customized, interactive UIs focusing on seamless front-end design and strong user experience.",
-      iconName: "Globe",
-      color: "hover:border-[#c0ee91]/40 hover:shadow-[0_20px_40px_rgba(192,238,145,0.05)]",
-      textColor: "text-[#c0ee91]"
-    },
-    {
-      id: "06",
-      title: "Prompt Engineering",
-      desc: "Expertly orchestrating advanced AI tools (Gemini, ChatGPT, Claude) for precise code generation, rapid debugging, and building complex web applications without manual hardcoding.",
-      iconName: "Sparkles",
-      color: "hover:border-[#ff8e7f]/40 hover:shadow-[0_20px_40px_rgba(255,142,127,0.05)]",
-      textColor: "text-[#ff8e7f]"
-    }
-  ]);
-
-  useEffect(() => {
-    fetch(`${API_BASE}/api/portfolio`)
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error("Failed to load");
-      })
-      .then((data) => {
-        if (data.skills && data.skills.length > 0) {
-          setSkills(data.skills);
-        }
-      })
-      .catch((err) => console.error("Error loading skills:", err));
-  }, []);
-
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15
-      }
+      transition: { staggerChildren: 0.1 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80 } }
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className="relative pt-32 pb-24 px-6 md:px-12 max-w-[1440px] mx-auto min-h-screen w-full"
+      className="w-full bg-transparent py-24 relative z-20"
     >
-      {/* Background Orbs */}
-      <div className="absolute -top-24 -left-24 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none"></div>
-      <div className="absolute top-1/2 -right-48 w-[600px] h-[600px] rounded-full bg-secondary/5 blur-[150px] pointer-events-none"></div>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-16 lg:gap-8">
 
-      <section className="max-w-4xl mx-auto mb-20 text-center md:text-left">
-        <div className="inline-block px-3 py-1 mb-6 border border-outline-variant/20 rounded-full">
-          <span className="label-md uppercase tracking-[0.2em] text-secondary text-[10px] font-headline">
-            Expertise & Technical Stack
-          </span>
+        {/* Left Side Content */}
+        <div className="flex-1 lg:max-w-md xl:max-w-lg pr-4">
+          <div className="mb-8">
+            <span className="font-inter font-medium text-sm tracking-widest uppercase text-ink border-b border-ink/20 inline-block pb-1">
+              MY SKILLS
+            </span>
+          </div>
+          <h2 className="text-5xl md:text-7xl font-bebas leading-[0.85] tracking-tight text-ink mb-6">
+            TOOLS I USE.<br />PROBLEMS I SOLVE.
+          </h2>
+          <p className="text-ink/80 font-inter text-base md:text-lg leading-relaxed mb-10">
+            I enjoy turning ideas into efficient, scalable and impactful solutions. Here are the core skills I use to build and solve.
+          </p>
+          <button className="group flex items-center justify-center gap-2 btn-outline border border-ink bg-transparent text-ink hover:bg-ink hover:text-paper px-6 py-3 font-inter text-xs font-bold tracking-widest uppercase transition-all duration-300">
+            KEEP LEARNING, KEEP BUILDING
+            <ArrowUpRight size={16} className="transform transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </button>
         </div>
-        <h1 className="font-headline font-light text-5xl md:text-8xl leading-tight mb-8 hero-gradient">
-          My Skills
-        </h1>
-        <p className="font-body text-lg md:text-xl text-on-surface-variant max-w-2xl leading-relaxed mb-4">
-          I focus on building strong fundamentals in programming and continuously improving my problem-solving abilities through practice and real-world applications.
-        </p>
-        <p className="font-headline font-medium text-secondary text-sm tracking-widest uppercase">
-          Always learning, always improving.
-        </p>
-      </section>
 
-      {/* Grid container with parallax cascade animations */}
-      <motion.section
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 md:grid-cols-12 gap-8 max-w-6xl mx-auto"
-      >
-        {skills.map((skill, index) => {
-          const IconComponent = iconMap[skill.iconName || "Terminal"] || Terminal;
-          const isLarge = index === 4 || index === 5;
-          return (
-            <motion.div
-              key={skill.id}
-              variants={itemVariants}
-              className={`group relative p-8 rounded-xl bg-surface-container-low border border-outline-variant/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden ${
-                isLarge ? "md:col-span-6" : index % 2 === 0 ? "md:col-span-5" : "md:col-span-7"
-              } ${skill.color}`}
-            >
-              {isLarge && (
-                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full blur-3xl pointer-events-none opacity-5 group-hover:opacity-10 transition-opacity ${
-                  index === 4 ? "bg-[#c0ee91]" : "bg-[#ff8e7f]"
-                }`} />
-              )}
-              <div className="flex justify-between items-start mb-12">
-                <div className="p-4 rounded-lg bg-surface-container-high relative z-10">
-                  <IconComponent className={`${skill.textColor}`} size={32} />
+        {/* Right Side Cards Grid */}
+        <div className="flex-1 w-full">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+          >
+            {skillCards.map((skill, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="flex flex-col justify-between border border-ink/20 rounded-xl p-6 bg-paper/50 hover:bg-paper hover:border-ink/40 transition-colors duration-300 h-64"
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="text-ink">
+                      {skill.icon}
+                    </div>
+                    <span className="font-inter text-xs font-bold text-ink/70 mt-2">
+                      {skill.percentage}
+                    </span>
+                  </div>
+                  <h3 className="font-bebas text-2xl tracking-wide text-ink mb-2">
+                    {skill.title}
+                  </h3>
+                  <p className="font-inter text-xs text-ink/80 leading-relaxed line-clamp-3">
+                    {skill.description}
+                  </p>
                 </div>
-                <span className={`label-md font-mono tracking-tighter relative z-10 ${skill.textColor} opacity-60`}>
-                  {skill.id}
-                </span>
-              </div>
-              <h3 className="font-headline font-light text-3xl text-on-surface mb-4 relative z-10">
-                {skill.title}
-              </h3>
-              <p className="text-on-surface-variant font-light leading-relaxed font-body relative z-10">
-                {skill.desc}
-              </p>
-            </motion.div>
-          );
-        })}
-      </motion.section>
 
-    </motion.div>
+                {/* Progress Bar */}
+                <div className="mt-4 flex items-center h-2 w-full border border-ink/20 rounded-full overflow-hidden bg-transparent">
+                  <div
+                    className="h-full bg-ink rounded-full"
+                    style={{ width: `${skill.progress}%` }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+      </div>
+    </motion.section>
   );
 }

@@ -11,9 +11,12 @@ anirudh-portfolio-bucket/
 │       ├── index.css
 │       ├── main.jsx
 │       ├── components/
+│       │   ├── CustomCursor.jsx
 │       │   ├── Footer.jsx
 │       │   ├── Header.jsx
 │       │   ├── LoadingScreen.jsx
+│       │   ├── Logo.jsx
+│       │   ├── PaperTexture.jsx
 │       │   ├── ParticleBg.jsx
 │       │   ├── ScrollToTop.jsx
 │       │   ├── TimeDisplay.jsx
@@ -24,6 +27,7 @@ anirudh-portfolio-bucket/
 │           ├── About.jsx
 │           ├── Admin.jsx
 │           ├── Contact.jsx
+│           ├── Experience.jsx
 │           ├── Home.jsx
 │           ├── Projects.jsx
 │           └── Skills.jsx
@@ -35,4 +39,3 @@ anirudh-portfolio-bucket/
 ├── package-lock.json
 ├── README_PORTFOLIO.md
 └── README_STRUCTURE.md
-

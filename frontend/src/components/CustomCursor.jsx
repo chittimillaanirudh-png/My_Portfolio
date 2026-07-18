@@ -14,7 +14,7 @@ export default function CustomCursor() {
     // Mouse & State tracking
     let mouse = { x: null, y: null, active: false };
     let isHovering = false;
-    
+
     let cursorColorFloat = 0;
     let cursorLerpX = null;
     let cursorLerpY = null;
@@ -74,10 +74,10 @@ export default function CustomCursor() {
 
         ctx.save();
 
-        // Exact Color Matching: Green (120, 167, 63) to Red (223, 107, 93)
-        const r = Math.round(120 + (223 - 120) * cursorColorFloat);
-        const g = Math.round(167 + (107 - 167) * cursorColorFloat);
-        const b = Math.round(63 + (93 - 63) * cursorColorFloat);
+        // Exact Color Matching: #000000ff (31, 30, 26)
+        const r = 0;
+        const g = 0;
+        const b = 0;
         const ringColorAlpha = (a) => `rgba(${r},${g},${b},${a})`;
 
         const time = Date.now() * 0.0015;

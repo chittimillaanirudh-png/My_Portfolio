@@ -1,303 +1,222 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Share2, Send, ArrowRight } from "lucide-react";
-import Toast from "../components/Toast";
+import { Mail, Phone, MapPin, Send, User, PenLine } from "lucide-react";
 import API_BASE from "../utils/api";
 
 export default function Contact() {
-  const formRef = useRef(null);
   const [formData, setFormData] = useState({
-    user_name: "",
-    user_email: "",
-    message: "",
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toast, setToast] = useState(null); // { message, type }
-  const [emailConfig, setEmailConfig] = useState({
-    serviceId: "service_bdu1n5v",
-    templateId: "template_7u102re",
-    publicKey: "KqrFRK0YlakuNxj9K"
-  });
-
-  useEffect(() => {
-    fetch(`${API_BASE}/api/config/emailjs`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load email config from server");
-        return res.json();
-      })
-      .then((data) => {
-        if (data && data.serviceId && data.templateId && data.publicKey) {
-          setEmailConfig(data);
-          if (window.emailjs) {
-            window.emailjs.init(data.publicKey);
-          }
-        }
-      })
-      .catch((err) => {
-        console.warn("Using default fallback EmailJS credentials:", err);
-      });
-  }, []);
+  const [statusMessage, setStatusMessage] = useState("");
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.user_name || !formData.user_email || !formData.message) {
-      setToast({
-        message: "Please fill out all the fields before sending.",
-        type: "error",
-      });
-      return;
-    }
-
     setIsSubmitting(true);
+    setStatusMessage("Sending message...");
 
-    // Save to backend database for admin panel
-    fetch(`${API_BASE}/api/contact`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.user_name,
-        email: formData.user_email,
-        message: formData.message
-      })
-    }).catch(err => console.error("Failed to save to backend:", err));
+    try {
+      const response = await fetch(`${API_BASE}/api/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
 
-    // Call window.emailjs directly (loaded via CDN in index.html)
-    if (window.emailjs) {
-      window.emailjs.init(emailConfig.publicKey);
-      window.emailjs
-        .sendForm(
-          emailConfig.serviceId,
-          emailConfig.templateId,
-          formRef.current
-        )
-        .then(
-          () => {
-            setToast({
-              message: "Message sent successfully! Thank you for reaching out.",
-              type: "success",
-            });
-            setFormData({ user_name: "", user_email: "", message: "" });
-            setIsSubmitting(false);
-          },
-          (error) => {
-            console.error("EmailJS Error:", error);
-            setToast({
-              message: "Failed to send the message. Please try again or email directly.",
-              type: "error",
-            });
-            setIsSubmitting(false);
-          }
-        );
-    } else {
-      // Fallback if script didn't load
-      setTimeout(() => {
-        console.warn("EmailJS is not loaded. Form fallback simulated.");
-        setToast({
-          message: "Message logged! Thanks for reaching out.",
-          type: "success",
-        });
-        setFormData({ user_name: "", user_email: "", message: "" });
-        setIsSubmitting(false);
-      }, 1000);
+      if (response.ok) {
+        setStatusMessage("Message sent successfully!");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setStatusMessage("Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatusMessage("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setStatusMessage(""), 5000);
     }
   };
+
+  const contactDetails = [
+    {
+      icon: <Mail size={18} className="text-ink" />,
+      label: "EMAIL",
+      value: "chittimillaanirudh@gmail.com"
+    },
+    {
+      icon: <MapPin size={18} className="text-ink" />,
+      label: "LOCATION",
+      value: "Yadadri Bhuvanagiri, Telangana, India"
+    },
+    {
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+        </svg>
+      ),
+      label: "GITHUB",
+      value: "github.com/chittimillaanirudh-png"
+    },
+    {
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" />
+        </svg>
+      ),
+      label: "LINKEDIN",
+      value: "linkedin.com/in/anirudh-chittimilla"
+    }
+  ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className="relative flex-grow pt-40 pb-20 px-8 max-w-[1440px] mx-auto w-full z-10"
+      className="w-full bg-transparent py-24 relative z-20"
     >
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-16 lg:gap-24">
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-        {/* Left Side: Direct contact information */}
-        <div className="lg:col-span-5 flex flex-col justify-center space-y-12">
-          <header className="space-y-6">
-            <span className="label-md uppercase tracking-[0.2em] text-secondary font-headline text-[10px] block">
-              Contact
+        {/* Left Side: Contact Info */}
+        <div className="flex-1 lg:max-w-md">
+          <div className="mb-8">
+            <span className="font-inter font-medium text-sm tracking-widest uppercase text-ink border-b border-ink/20 inline-block pb-1">
+              GET IN TOUCH
             </span>
-            <h1 className="text-5xl md:text-7xl font-headline font-light leading-tight text-transparent bg-clip-text bg-gradient-to-r from-[#f3a77d] via-[#ff8a7a] to-[#c0ee91] tracking-tight">
-              Get In Touch
-            </h1>
-            <p className="text-lg md:text-xl text-on-surface-variant font-light leading-relaxed max-w-md font-body">
-              Have a project idea, collaboration opportunity, or just want to connect? Feel free to reach out — I’d love to hear from you.
-            </p>
-          </header>
+          </div>
+          <h2 className="text-5xl md:text-7xl font-bebas leading-[0.85] tracking-tight text-ink mb-6">
+            LET'S BUILD<br />SOMETHING GREAT.
+          </h2>
+          <p className="text-ink/80 font-inter text-base md:text-lg leading-relaxed mb-12">
+            I'm always open to discussing new opportunities, collaborations, or just having a chat about tech and ideas. Feel free to reach out!
+          </p>
 
-          <div className="space-y-8">
-            <div className="flex items-center gap-4 group">
-              <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center border border-outline-variant/10 group-hover:border-primary/40 transition-colors duration-500">
-                <Mail className="text-primary" size={20} />
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant font-headline">
-                  Email
-                </p>
-                <a
-                  className="text-on-surface hover:text-primary transition-colors font-body"
-                  href="mailto:chittimillaanirudh@gmail.com"
-                >
-                  chittimillaanirudh@gmail.com
-                </a>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 group">
-              <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center border border-outline-variant/10 group-hover:border-secondary/40 transition-colors duration-500">
-                <Share2 className="text-secondary" size={20} />
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant font-headline">
-                  Social Profiles
-                </p>
-                <div className="flex gap-4 mt-1 font-body text-sm">
-                  <a
-                    className="text-on-surface hover:text-secondary transition-colors"
-                    href="https://www.linkedin.com/in/anirudh-chittimilla-a74360341"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    LinkedIn
-                  </a>
-                  <span className="text-outline-variant">/</span>
-                  <a
-                    className="text-on-surface hover:text-secondary transition-colors"
-                    href="https://www.instagram.com/ch_anirudh37_official"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Instagram
-                  </a>
+          <div className="space-y-0 border-t border-ink/20">
+            {contactDetails.map((detail, index) => (
+              <div key={index} className="flex items-start gap-6 border-b border-ink/20 py-4">
+                <div className="w-10 h-10 border border-ink/20 rounded bg-paper flex items-center justify-center shrink-0">
+                  {detail.icon}
+                </div>
+                <div className="flex flex-col pt-1">
+                  <span className="font-inter text-[10px] font-bold tracking-widest uppercase text-ink/70 mb-0.5">
+                    {detail.label}
+                  </span>
+                  <span className="font-inter text-sm text-ink font-medium">
+                    {detail.value}
+                  </span>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div className="pt-8 border-t border-outline-variant/10">
-            <p className="text-lg font-headline font-light italic text-on-surface-variant/60">
-              "Let’s build something amazing together."
-            </p>
+            ))}
           </div>
         </div>
 
-        {/* Right Side: Contact Form Card */}
-        <div className="lg:col-span-7">
-          <div className="bg-surface-variant/40 backdrop-blur-2xl rounded-3xl p-8 md:p-12 border border-outline-variant/10 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8">
-              <Send className="text-outline-variant/20 rotate-45" size={48} />
-            </div>
+        {/* Right Side: Contact Form */}
+        <div className="flex-1 w-full">
+          <div className="border border-ink/20 rounded-xl p-8 lg:p-12 bg-paper/50">
 
-            <form
-              ref={formRef}
-              onSubmit={handleSubmit}
-              className="space-y-8 relative z-10"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <label
-                    className="label-md uppercase tracking-widest text-[10px] text-on-surface-variant ml-1 block font-headline"
-                    for="name"
-                  >
-                    Name
-                  </label>
+            <div className="flex items-center gap-4 mb-4">
+              <Mail size={24} className="text-ink" strokeWidth={1.5} />
+              <h3 className="font-inter font-bold text-lg tracking-wide uppercase text-ink">
+                SEND ME A MESSAGE
+              </h3>
+            </div>
+            <p className="font-inter text-sm text-ink/70 mb-8">
+              I'll get back to you as soon as possible.
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Name */}
+                <div className="relative">
                   <input
-                    className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-6 py-4 text-on-surface placeholder:text-outline-variant/40 focus:outline-none focus:ring-0 focus:border-primary/50 transition-all duration-300 font-body"
-                    id="name"
-                    name="user_name"
-                    value={formData.user_name}
-                    onChange={handleChange}
-                    placeholder="John Doe"
                     type="text"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    className="label-md uppercase tracking-widest text-[10px] text-on-surface-variant ml-1 block font-headline"
-                    for="email"
-                  >
-                    Email
-                  </label>
-                  <input
-                    className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-6 py-4 text-on-surface placeholder:text-outline-variant/40 focus:outline-none focus:ring-0 focus:border-primary/50 transition-all duration-300 font-body"
-                    id="email"
-                    name="user_email"
-                    value={formData.user_email}
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
-                    placeholder="john@example.com"
-                    type="email"
+                    placeholder="Your Name"
+                    required
+                    className="w-full bg-transparent border border-ink/30 rounded px-4 py-3 text-sm font-inter text-ink placeholder:text-ink/40 focus:outline-none focus:border-ink transition-colors"
                   />
+                  <User size={18} className="absolute right-4 top-3.5 text-ink/40" />
+                </div>
+
+                {/* Email */}
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Your Email"
+                    required
+                    className="w-full bg-transparent border border-ink/30 rounded px-4 py-3 text-sm font-inter text-ink placeholder:text-ink/40 focus:outline-none focus:border-ink transition-colors"
+                  />
+                  <Mail size={18} className="absolute right-4 top-3.5 text-ink/40" />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label
-                  className="label-md uppercase tracking-widest text-[10px] text-on-surface-variant ml-1 block font-headline"
-                  for="message"
-                >
-                  Message
-                </label>
+              {/* Subject */}
+              <div className="relative">
+                <input
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  placeholder="Subject"
+                  required
+                  className="w-full bg-transparent border border-ink/30 rounded px-4 py-3 text-sm font-inter text-ink placeholder:text-ink/40 focus:outline-none focus:border-ink transition-colors"
+                />
+                <PenLine size={18} className="absolute right-4 top-3.5 text-ink/40" />
+              </div>
+
+              {/* Message */}
+              <div className="relative">
                 <textarea
-                  className="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-xl px-6 py-4 text-on-surface placeholder:text-outline-variant/40 focus:outline-none focus:ring-0 focus:border-primary/50 transition-all duration-300 resize-none font-body"
-                  id="message"
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Tell me about your vision..."
-                  rows="5"
-                />
+                  placeholder="Your Message"
+                  required
+                  rows={6}
+                  className="w-full bg-transparent border border-ink/30 rounded px-4 py-3 text-sm font-inter text-ink placeholder:text-ink/40 focus:outline-none focus:border-ink transition-colors resize-y"
+                ></textarea>
               </div>
 
-              <div className="pt-4">
+              {/* Submit Button */}
+              <div>
                 <button
-                  className="group relative w-full md:w-auto overflow-hidden rounded-xl px-12 py-5 font-headline font-medium tracking-widest text-on-surface transition-all duration-500 bg-transparent"
                   type="submit"
                   disabled={isSubmitting}
+                  className="group flex items-center justify-center gap-3 bg-ink text-paper px-8 py-4 font-inter text-xs font-bold tracking-widest uppercase hover:bg-ink/90 transition-colors disabled:opacity-70"
                 >
-                  <div className="absolute inset-0 bg-transparent border border-outline-variant/20 group-hover:border-primary group-hover:shadow-[0_0_25px_-5px_#ff8a7a] transition-all duration-500"></div>
-                  <span className="relative flex items-center justify-center gap-3 text-xs uppercase">
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                    <ArrowRight
-                      className="group-hover:translate-x-1 transition-transform"
-                      size={14}
-                    />
-                  </span>
+                  {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
+                  {!isSubmitting && <Send size={16} className="transform transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />}
                 </button>
               </div>
+
+              {statusMessage && (
+                <div className="mt-4 font-inter text-sm text-ink/80 font-medium">
+                  {statusMessage}
+                </div>
+              )}
+
             </form>
           </div>
-
-          <div className="mt-8 grid grid-cols-3 gap-4">
-            <div className="h-24 rounded-2xl bg-surface-container-low border border-outline-variant/10 overflow-hidden">
-              <img
-                className="w-full h-full object-cover grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
-                alt="Cosmic satellite view of city lights"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC--R7O-2vLV7GMpr8vmkWeq9aHYEKwKLssMzvgjSmLfQETbuAQpiTwZSklAt83IXRYpSsLw1g_KG6bQmgUonevAa32JpReTg3e_RsmN0Q8h54W7LEfEGWwlCE9pDa2veoZkl8NAJCGfBn-jWT2AgBVcGSVd1Ar7YiFRahvudx9_q6cq6n1tJgtp9j-VaMVwj28n8hWhFrn34vD8S4ftoAKZOg0an2gk4MK3jvdlX7aH60ufXw40Imi4NSKKJ3uBcCGajjrMO9jVY3c"
-              />
-            </div>
-            <div className="col-span-2 h-24 rounded-2xl bg-surface-container-low border border-outline-variant/10 flex items-center px-8">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-body">
-                  Available for remote collaborations worldwide
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
+
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

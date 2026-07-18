@@ -1,155 +1,154 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapPin, Sparkles } from "lucide-react";
+import { Calendar, User, GraduationCap, MapPin, Mail, Phone, Code2, Laptop, Coffee, Target } from "lucide-react";
 import API_BASE from "../utils/api";
 
 export default function About() {
   const [aboutData, setAboutData] = useState({
-    title: "About Me",
-    description: "Loading...",
-    mission: "Loading...",
-    locationCurrent: "",
-    locationNative: ""
+    title: "ABOUT ME",
+    statement: "PASSIONATE DEVELOPER &\nPROBLEM SOLVER",
+    description: "I'm a B.Tech CSE (AI & ML) student who loves turning ideas into real-world solutions. I build full-stack applications and explore AI to create impactful experiences.",
+    quote: "Solving real problems through code and creating meaningful digital experiences that make a difference.",
+    dob: "9 July, 2006",
+    age: "20",
+    education: "B.Tech CSE (AI & ML)\nSree Datta Institute of Engineering and Science",
+    location: "Yadadri Bhuvanagiri, Telangana, India",
+    email: "chittimillaanirudh@gmail.com",
   });
-  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     fetch(`${API_BASE}/api/portfolio`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         if (data && data.about) {
-          setAboutData(data.about);
-          if (data.about.imageUrl) {
-            setImageUrl(data.about.imageUrl);
-          }
+          setAboutData(prev => ({ ...prev, ...data.about }));
         }
       })
       .catch(err => console.error("Error loading about data:", err));
   }, []);
 
+  const stats = [
+    { icon: <Code2 size={24} strokeWidth={1.5} />, value: "2+", label: "YEARS CODING" },
+    { icon: <Laptop size={24} strokeWidth={1.5} />, value: "10+", label: "PROJECTS BUILT" },
+    { icon: <Coffee size={24} strokeWidth={1.5} />, value: "1000+", label: "HOURS LEARNING" },
+    { icon: <Target size={24} strokeWidth={1.5} />, value: "KEEP GROWING", label: "ALWAYS IMPROVING", isString: true }
+  ];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.8 }}
-      className="relative pt-32 pb-24 px-8 max-w-[1440px] mx-auto z-10 w-full"
+      className="w-full bg-transparent pt-32 pb-16 relative z-20"
     >
-      <section className="mb-24 md:mb-32">
-        <div className="flex flex-col md:flex-row gap-12 items-start">
-          <div className="flex-1 space-y-8">
-            <span className="label-md uppercase tracking-[0.2em] text-secondary font-headline text-xs block">
-              Curating the Future
-            </span>
-            <h1 className="text-5xl md:text-8xl font-headline font-light leading-tight gradient-text">
-              {aboutData.title || "About Me"}
-            </h1>
-            {aboutData.description.split("\n").map((paragraph, index) => (
-              paragraph.trim() && (
-                <p key={index} className="text-xl md:text-2xl text-on-surface font-light leading-relaxed max-w-2xl font-body whitespace-pre-wrap">
-                  {paragraph}
-                </p>
-              )
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-12 lg:gap-24">
+
+        {/* Left Side: Empty or Portrait padding for layout matching if needed, but in screenshot it's text on the right of the image? 
+            Wait, the screenshot has the portrait on the LEFT, and the text on the RIGHT! */}
+
+        {/* We will leave a left placeholder for the portrait image from the Home page which stays fixed in the background/side, 
+            or is the portrait part of About? The screenshot shows AC logo top left, portrait on left, text on right.
+            Ah, in Home.jsx the portrait is on the right. In About.jsx it's on the left!
+            Let's add the portrait on the left. */}
+        <div className="hidden lg:block lg:w-5/12 h-full">
+          <img
+            src="https://res.cloudinary.com/dqsl62kr9/image/upload/v1784382887/portfolio_zy6lxy.png"
+            alt="Portrait"
+            className="w-full h-auto object-cover"
+            style={{
+              WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
+              maskImage: "linear-gradient(to bottom, black 80%, transparent 100%)"
+            }}
+          />
+        </div>
+
+        {/* Right Side */}
+        <div className="flex-1 space-y-10">
+
+          <div className="space-y-4">
+            <h3 className="font-inter font-medium text-sm tracking-widest uppercase text-ink border-b border-ink/20 inline-block pb-1">
+              {aboutData.title}
+            </h3>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bebas leading-[0.9] tracking-tight text-ink whitespace-pre-line">
+              {aboutData.statement}
+            </h2>
+          </div>
+
+          {/* Mobile Portrait (Mobile only) - Rendered after headings */}
+          <div className="block lg:hidden w-full h-[40vh] min-h-[300px] overflow-hidden rounded-2xl border border-ink/20">
+            <img
+              src="https://res.cloudinary.com/dqsl62kr9/image/upload/v1784382887/portfolio_zy6lxy.png"
+              alt="Portrait"
+              className="w-full h-full object-cover object-center"
+              style={{
+                WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
+                maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)"
+              }}
+            />
+          </div>
+
+          <p className="text-ink/80 font-inter text-base md:text-lg max-w-xl leading-relaxed pt-2">
+            {aboutData.description}
+          </p>
+
+          <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-start">
+            {/* Details List */}
+            <div className="flex-1 space-y-4 font-inter text-sm md:text-base text-ink">
+              <div className="grid grid-cols-[auto_1fr_2fr] gap-4 items-start">
+                <Calendar size={18} className="mt-0.5 text-ink/70" />
+                <span className="font-medium tracking-wide uppercase text-xs mt-1">DATE OF BIRTH</span>
+                <span className="text-ink/80">: {aboutData.dob}</span>
+
+                <User size={18} className="mt-0.5 text-ink/70" />
+                <span className="font-medium tracking-wide uppercase text-xs mt-1">AGE</span>
+                <span className="text-ink/80">: {aboutData.age}</span>
+
+                <GraduationCap size={18} className="mt-0.5 text-ink/70" />
+                <span className="font-medium tracking-wide uppercase text-xs mt-1">EDUCATION</span>
+                <span className="text-ink/80 whitespace-pre-line">: {aboutData.education}</span>
+
+                <MapPin size={18} className="mt-0.5 text-ink/70" />
+                <span className="font-medium tracking-wide uppercase text-xs mt-1">LOCATION</span>
+                <span className="text-ink/80">: {aboutData.location}</span>
+
+                <Mail size={18} className="mt-0.5 text-ink/70" />
+                <span className="font-medium tracking-wide uppercase text-xs mt-1">EMAIL</span>
+                <span className="text-ink/80">: {aboutData.email}</span>
+
+                <Phone size={18} className="mt-0.5 text-ink/70" />
+                <span className="font-medium tracking-wide uppercase text-xs mt-1">PHONE</span>
+                <span className="text-ink/80">: {aboutData.phone}</span>
+              </div>
+            </div>
+
+            {/* Quote Card */}
+            <div className="w-full md:w-64 border border-ink/20 rounded-lg p-6 bg-paper/50">
+              <h4 className="font-inter font-medium text-xs tracking-widest uppercase mb-4 text-ink">WHAT DRIVES ME</h4>
+              <p className="font-inter text-sm leading-relaxed text-ink/80 italic relative">
+                <span className="text-4xl absolute -top-4 -left-2 text-ink/20 font-serif">"</span>
+                {aboutData.quote}
+              </p>
+            </div>
+          </div>
+
+          {/* Stats Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border border-ink/20 rounded-xl p-6 bg-paper/50">
+            {stats.map((stat, i) => (
+              <div key={i} className={`flex flex-col items-center text-center space-y-2 ${i !== 0 ? 'md:border-l border-ink/10' : ''}`}>
+                <div className="text-ink mb-1">{stat.icon}</div>
+                <div className={`${stat.isString ? 'text-sm mt-1.5 font-bold tracking-widest uppercase' : 'text-3xl font-bebas tracking-wide'}`}>
+                  {stat.value}
+                </div>
+                <div className="font-inter text-[10px] tracking-widest uppercase text-ink/60">
+                  {stat.label}
+                </div>
+              </div>
             ))}
           </div>
 
-          <div className="home-right w-full md:w-2/5 flex justify-center">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.5 }}
-              className="home-image-wrap"
-            >
-              <div className="home-image-bg absolute inset-0 bg-[#ff8a7a]/5 rounded-full blur-[60px]" />
-              <img
-                alt="Cinematic portrait of Anirudh Chittimilla"
-                src={imageUrl || "https://ik.imagekit.io/y3evpdae0/ChatGPT%20Image%20Mar%2031,%202026,%2005_49_42%20PM.png"}
-                className="rounded-2xl border border-outline-variant/10 relative z-10 filter grayscale hover:grayscale-0 transition-all duration-700"
-              />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Grid Section */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-24">
-        {/* Creative Journey card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="md:col-span-8 p-8 md:p-12 rounded-xl bg-surface-container-low border border-outline-variant/20 relative overflow-hidden group hover:bg-surface-container transition-all duration-500"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl -mr-32 -mt-32 rounded-full"></div>
-          <Sparkles className="text-primary mb-6" size={32} />
-          <h3 className="text-2xl font-headline font-medium mb-6 text-on-surface">
-            The Creative Journey
-          </h3>
-          <p className="text-on-surface-variant text-lg leading-relaxed font-light font-body">
-            My journey in technology started with curiosity and has grown into a deep passion for coding, system design, and continuous improvement. I constantly explore new tools, technologies, and best practices to enhance my skills. I believe in writing clean, maintainable code and creating impactful digital experiences. My goal is to become a skilled developer who can contribute to innovative and meaningful projects.
-          </p>
-        </motion.div>
-
-        {/* Mission card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="md:col-span-4 p-8 rounded-xl bg-surface-container-high border border-outline-variant/20 flex flex-col justify-center relative overflow-hidden group hover:scale-[1.01] transition-transform duration-500"
-        >
-          <div className="orbital-line top-1/4"></div>
-          <div className="orbital-line bottom-1/4"></div>
-          <span className="label-md uppercase tracking-widest text-[#acabaa] mb-4 text-[10px] block">
-            Mission
-          </span>
-          <h4 className="text-2xl font-headline font-light italic leading-snug text-primary-dim">
-            "{aboutData.mission}"
-          </h4>
-        </motion.div>
-
-        {/* Location Cards */}
-        <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-6 p-8 rounded-xl bg-surface-container-highest/40 backdrop-blur-xl border border-outline-variant/10 group"
-          >
-            <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
-              <MapPin className="text-secondary" size={24} />
-            </div>
-            <div>
-              <p className="label-md uppercase text-[10px] text-[#acabaa] tracking-widest mb-1">
-                Current Location
-              </p>
-              <p className="text-xl font-headline font-light text-on-surface">
-                {aboutData.locationCurrent || "Ibrahimpatnam, Rangareddy"}
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-6 p-8 rounded-xl bg-surface-container-highest/40 backdrop-blur-xl border border-outline-variant/10 group"
-          >
-            <div className="w-16 h-16 rounded-full bg-tertiary/10 flex items-center justify-center group-hover:bg-tertiary/20 transition-colors">
-              <MapPin className="text-tertiary" size={24} />
-            </div>
-            <div>
-              <p className="label-md uppercase text-[10px] text-[#acabaa] tracking-widest mb-1">
-                Native Place
-              </p>
-              <p className="text-xl font-headline font-light text-on-surface">
-                {aboutData.locationNative || "Ramajipet, Yadagirigutta"}
-              </p>
-            </div>
-          </motion.div>
         </div>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }
