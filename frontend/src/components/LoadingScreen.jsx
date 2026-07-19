@@ -66,7 +66,7 @@ export default function Loader({ onComplete }) {
       <div className="text-center relative z-10 px-4">
         {/* Logo drawing itself, line by line */}
         <div className="mb-6 flex justify-center">
-          <AnimatedLogo className="w-28 h-28 md:w-40 md:h-40 text-ink" />
+          <AnimatedLogo className="w-48 h-48 md:w-64 md:h-64 text-ink" />
         </div>
 
         {/* Name: "ANIRUDH CHITTIMILLA" letters typing */}

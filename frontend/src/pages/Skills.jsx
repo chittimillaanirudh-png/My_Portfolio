@@ -6,7 +6,6 @@ import API_BASE from "../utils/api";
 const skillCards = [
   {
     icon: <div className="font-bebas text-5xl font-bold">C</div>, // Custom 'C' letter or icon
-    percentage: "90%",
     title: "C LANGUAGE",
     description: "Strong foundation in C programming, data structures, algorithms and problem solving.",
     progress: 90
@@ -14,36 +13,37 @@ const skillCards = [
   {
     icon: <div className="w-10 h-10 border-4 border-ink rounded-full flex items-center justify-center">
       <div className="w-4 h-4 bg-ink rounded-tl-full rounded-br-full" />
-    </div>, // Python like icon
-    percentage: "90%",
+    </div>,
     title: "PYTHON",
     description: "Building efficient programs, automations and solving real-world problems with Python.",
     progress: 90
   },
   {
     icon: <div className="w-12 h-10 border-2 border-ink rounded-lg flex items-center justify-center font-bold text-xs">&lt;/&gt;</div>,
-    percentage: "90%",
     title: "DATA STRUCTURES",
     description: "Strong grasp of data structures and algorithms to write optimized and efficient code.",
     progress: 90
   },
   {
     icon: <div className="font-bebas text-4xl font-bold flex items-center">C<span className="text-2xl mt-1">++</span></div>,
-    percentage: "85%",
     title: "C++",
     description: "Object oriented programming, STL, and building efficient applications.",
     progress: 85
   },
   {
     icon: <div className="w-12 h-12 bg-ink text-paper rounded-full flex items-center justify-center font-bold text-sm">&lt;/&gt;</div>,
-    percentage: "80%",
     title: "VIBE CODING",
     description: "Solving problems on coding platforms and improving logic and problem solving speed.",
     progress: 80
   },
   {
-    icon: <BrainCircuit size={40} strokeWidth={1.5} />,
-    percentage: "85%",
+    icon: (
+      <BrainCircuit
+        size={40}
+        strokeWidth={1.5}
+        style={{ transform: "rotate(90deg)" }}
+      />
+    ),
     title: "PROMPT ENGINEERING",
     description: "Designing effective prompts and leveraging AI models to build smart and useful solutions.",
     progress: 85
@@ -113,9 +113,6 @@ export default function Skills() {
                     <div className="text-ink">
                       {skill.icon}
                     </div>
-                    <span className="font-inter text-xs font-bold text-ink/70 mt-2">
-                      {skill.percentage}
-                    </span>
                   </div>
                   <h3 className="font-bebas text-2xl tracking-wide text-ink mb-2">
                     {skill.title}
@@ -123,14 +120,6 @@ export default function Skills() {
                   <p className="font-inter text-xs text-ink/80 leading-relaxed line-clamp-3">
                     {skill.description}
                   </p>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mt-4 flex items-center h-2 w-full border border-ink/20 rounded-full overflow-hidden bg-transparent">
-                  <div
-                    className="h-full bg-ink rounded-full"
-                    style={{ width: `${skill.progress}%` }}
-                  />
                 </div>
               </motion.div>
             ))}
