@@ -17,7 +17,8 @@ const projectData = [
     ],
     tech: ["React", "Node.js", "MongoDB", "AI / Gemini", "Tailwind CSS"],
     icon: <Pill size={36} strokeWidth={1.5} />,
-    illustration: "pill"
+    illustration: "pill",
+    liveUrl: "https://lmt-u-app.vercel.app"
   },
   {
     id: "gp",
@@ -32,7 +33,8 @@ const projectData = [
     ],
     tech: ["React", "Firebase", "Charts.js", "REST API", "Tailwind CSS"],
     icon: <Globe2 size={36} strokeWidth={1.5} />,
-    illustration: "globe"
+    illustration: "globe",
+    liveUrl: "https://global-price-gp.vercel.app"
   }
 ];
 
@@ -94,9 +96,15 @@ export default function Projects() {
               className="group border border-ink/20 rounded-xl p-8 lg:p-10 bg-paper/50 hover:bg-paper hover:border-ink/40 transition-colors duration-300 relative flex flex-col h-full overflow-hidden"
             >
               {/* Top Link Icon */}
-              <div className="absolute top-8 right-8 text-ink/40 group-hover:text-ink transition-colors duration-300">
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute top-8 right-8 text-ink/40 hover:text-ink hover:scale-110 group-hover:text-ink/70 transition-all duration-300 z-30"
+                title="View Live Site"
+              >
                 <ArrowUpRight size={24} />
-              </div>
+              </a>
 
               {/* Title Header */}
               <div className="flex items-center gap-4 mb-6 relative z-10 border-b border-ink/20 pb-6 w-full lg:w-[65%]">

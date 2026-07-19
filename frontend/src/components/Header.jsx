@@ -45,25 +45,27 @@ export default function Header() {
             className="text-ink hover:opacity-70 transition-opacity flex items-center gap-2 -ml-2 lg:-ml-6"
           >
             <Logo className="w-9 h-9 md:w-16 md:h-16" />
-            <span className="font-bebas text-lg md:text-4xl tracking-wider pt-1">AC.</span>
+
+            <span className="font-bebas text-3xl md:text-6xl tracking-wider leading-none">
+              AC.
+            </span>
           </Link>
 
           {/* Desktop Nav Items */}
           <div className="hidden md:flex items-center gap-8 font-inter text-sm font-medium text-ink">
             {navItems.map((item) => (
-               <NavLink
-                 key={item.name}
-                 to={item.path}
-                 className={({ isActive }) =>
-                   `transition-all duration-300 pb-1 border-b-2 ${
-                     isActive
-                       ? "border-ink"
-                       : "border-transparent hover:border-ink/30"
-                   }`
-                 }
-               >
-                 {item.name}
-               </NavLink>
+              <NavLink
+                key={item.name}
+                to={item.path}
+                className={({ isActive }) =>
+                  `transition-all duration-300 pb-1 border-b-2 ${isActive
+                    ? "border-ink"
+                    : "border-transparent hover:border-ink/30"
+                  }`
+                }
+              >
+                {item.name}
+              </NavLink>
             ))}
           </div>
 
@@ -91,9 +93,8 @@ export default function Header() {
 
       {/* Mobile Drawer (Left side) */}
       <div
-        className={`fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-paper z-[9999] flex flex-col items-start justify-start pt-28 gap-8 px-8 transform transition-transform duration-500 drawer-fade-left ease-[cubic-bezier(0.76,0,0.24,1)] ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-paper z-[9999] flex flex-col items-start justify-start pt-28 gap-8 px-8 transform transition-transform duration-500 drawer-fade-left ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {navItems.map((item) => (
           <NavLink
@@ -101,15 +102,14 @@ export default function Header() {
             to={item.path}
             onClick={() => setIsOpen(false)}
             className={({ isActive }) =>
-              `font-bebas text-2xl tracking-wide w-full transition-all duration-300 ${
-                isActive ? "text-ink opacity-100" : "text-ink opacity-60 hover:opacity-100"
+              `font-bebas text-2xl tracking-wide w-full transition-all duration-300 ${isActive ? "text-ink opacity-100" : "text-ink opacity-60 hover:opacity-100"
               }`
             }
           >
             {item.name}
           </NavLink>
         ))}
-        
+
         <button
           onClick={handleHireMe}
           className="bg-ink text-paper rounded-full text-xs uppercase tracking-widest font-bebas px-6 py-3.5 w-full mt-4 flex justify-between items-center group transition-colors duration-300"

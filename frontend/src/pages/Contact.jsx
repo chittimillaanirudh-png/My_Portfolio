@@ -84,9 +84,9 @@ export default function Contact() {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className="w-full bg-transparent py-24 relative z-20"
+      className="w-full bg-transparent py-16 md:py-24 relative z-20"
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-16 lg:gap-24">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-12 lg:gap-24">
 
         {/* Left Side: Contact Info */}
         <div className="flex-1 lg:max-w-md">
@@ -113,7 +113,22 @@ export default function Contact() {
                     {detail.label}
                   </span>
                   <span className="font-inter text-sm text-ink font-medium">
-                    {detail.value}
+                    {detail.label === "LOCATION" ? (
+                      detail.value
+                    ) : (
+                      <a
+                        href={
+                          detail.label === "EMAIL"
+                            ? `mailto:${detail.value}`
+                            : `https://${detail.value}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline hover:opacity-80 transition-all duration-300"
+                      >
+                        {detail.value}
+                      </a>
+                    )}
                   </span>
                 </div>
               </div>
@@ -123,21 +138,21 @@ export default function Contact() {
 
         {/* Right Side: Contact Form */}
         <div className="flex-1 w-full">
-          <div className="border border-ink/20 rounded-xl p-8 lg:p-12 bg-paper/50">
+          <div className="border border-ink/20 rounded-xl p-5 sm:p-8 lg:p-12 bg-paper/50">
 
             <div className="flex items-center gap-4 mb-4">
               <Mail size={24} className="text-ink" strokeWidth={1.5} />
-              <h3 className="font-inter font-bold text-lg tracking-wide uppercase text-ink">
+              <h3 className="font-inter font-bold text-base sm:text-lg tracking-wide uppercase text-ink">
                 SEND ME A MESSAGE
               </h3>
             </div>
-            <p className="font-inter text-sm text-ink/70 mb-8">
+            <p className="font-inter text-sm text-ink/70 mb-6 sm:mb-8">
               I'll get back to you as soon as possible.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {/* Name */}
                 <div className="relative">
                   <input

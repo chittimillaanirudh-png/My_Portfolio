@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Logo from "./Logo";
+import AnimatedLogo from "./AnimatedLogo";
 
 export default function Loader({ onComplete }) {
   const [progress, setProgress] = useState(0);
@@ -15,7 +15,7 @@ export default function Loader({ onComplete }) {
       setTimeout(() => {
         sessionStorage.setItem("portfolio_loaded_2026", "true");
         onComplete();
-      }, 3800)
+      }, 8300) // logo settles ~7.4s in, then holds on screen for ~0.9s before dismiss
     ];
 
     // Smooth bottom progress line
@@ -27,7 +27,7 @@ export default function Loader({ onComplete }) {
         }
         return prev + 1;
       });
-    }, 32);
+    }, 82); // 100 ticks × 82ms ≈ 8.2s, matched to the new dismiss timeout above
 
     return () => {
       timers.forEach(clearTimeout);
@@ -64,26 +64,9 @@ export default function Loader({ onComplete }) {
 
       {/* Center Container */}
       <div className="text-center relative z-10 px-4">
-        {/* Large "AC" Logo drawing itself */}
+        {/* Logo drawing itself, line by line */}
         <div className="mb-6 flex justify-center">
-          <motion.div
-            initial={{ clipPath: "circle(0% at 50% 50%)", opacity: 0 }}
-            animate={{ clipPath: "circle(100% at 50% 50%)", opacity: 1 }}
-            transition={{ 
-              clipPath: { duration: 2.8, ease: "easeInOut" },
-              opacity: { duration: 0.6 }
-            }}
-            className="relative"
-          >
-            <Logo className="w-28 h-28 md:w-40 md:h-40 text-ink" />
-            {/* Ink spread blob animation behind the logo */}
-            <motion.div
-              initial={{ scale: 0.2, opacity: 0 }}
-              animate={{ scale: [1, 1.2, 1.1], opacity: [0.15, 0.25, 0.15] }}
-              transition={{ duration: 2.8, ease: "easeInOut" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-ink rounded-full blur-2xl -z-10"
-            />
-          </motion.div>
+          <AnimatedLogo className="w-28 h-28 md:w-40 md:h-40 text-ink" />
         </div>
 
         {/* Name: "ANIRUDH CHITTIMILLA" letters typing */}
