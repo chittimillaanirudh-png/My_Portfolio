@@ -1,65 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>PORTFOLIO | Anirudh Chittimilla</title>
-    
-    <!-- Google Fonts: Bebas Neue and Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&display=swap"
-      rel="stylesheet"
-    />
-    
-    <!-- Material Symbols for elegant UI icon accents -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    
-    <!-- EmailJS SDK integration for client-side routing fallback -->
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    <script>
-      (function() {
-        emailjs.init("KqrFRK0YlakuNxj9K");
-      })();
-    </script>
-    
-    <!-- ─── NAVIGATION TYPE DETECTION ────────────────────────────── -->
-    <script>
-      (function () {
-          var navEntries = performance.getEntriesByType("navigation");
-          var navType = navEntries.length > 0 ? navEntries[0].type : null;
 
-          if (!navType) {
-              if (typeof performance !== "undefined" && performance.navigation) {
-                  navType = performance.navigation.type === 1 ? "reload" : "navigate";
-              } else {
-                  navType = "navigate";
-              }
-          }
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>PORTFOLIO | Anirudh Chittimilla</title>
 
-          var isReload = navType === "reload";
-          var wasVisited = sessionStorage.getItem("ac_visited") === "true";
-          sessionStorage.setItem("ac_visited", "true");
+  <!-- Google Fonts: Bebas Neue and Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
 
-          var showLoading = (!wasVisited) || isReload;
-          var showBlink = wasVisited && !isReload;
+  <!-- Material Symbols for elegant UI icon accents -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
 
-          window.__AC_SHOW_LOADING = showLoading;
-          window.__AC_SHOW_BLINK = showBlink;
-      })();
-    </script>
-    
-    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dqsl62kr9/image/upload/v1776693781/ChatGPT_Image_Apr_20_2026_07_32_51_PM_jymrza.png">
-  </head>
-  <body class="text-primary font-inter bg-paper overflow-x-hidden antialiased">
-    
-    <!-- Mountpoint for modern React full stack app -->
-    <div id="root"></div>
-    
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <!-- EmailJS SDK integration for client-side routing fallback -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("KqrFRK0YlakuNxj9K");
+    })();
+  </script>
+
+  <!-- ─── NAVIGATION TYPE DETECTION ────────────────────────────── -->
+  <script>
+    (function () {
+      var navEntries = performance.getEntriesByType("navigation");
+      var navType = navEntries.length > 0 ? navEntries[0].type : null;
+
+      if (!navType) {
+        if (typeof performance !== "undefined" && performance.navigation) {
+          navType = performance.navigation.type === 1 ? "reload" : "navigate";
+        } else {
+          navType = "navigate";
+        }
+      }
+
+      var isReload = navType === "reload";
+      var wasVisited = sessionStorage.getItem("ac_visited") === "true";
+      sessionStorage.setItem("ac_visited", "true");
+
+      var showLoading = (!wasVisited) || isReload;
+      var showBlink = wasVisited && !isReload;
+
+      window.__AC_SHOW_LOADING = showLoading;
+      window.__AC_SHOW_BLINK = showBlink;
+    })();
+  </script>
+
+  <link rel="icon" type="image/png"
+    href="https://res.cloudinary.com/dqsl62kr9/image/upload/v1784817858/Screenshot_2026_0723_201338_uectss.png">
+</head>
+
+<body class="text-primary font-inter bg-paper overflow-x-hidden antialiased">
+
+  <!-- Mountpoint for modern React full stack app -->
+  <div id="root"></div>
+
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

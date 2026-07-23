@@ -53,7 +53,7 @@ export default function About() {
             Let's add the portrait on the left. */}
         <div className="hidden lg:block lg:w-5/12 h-full">
           <img
-            src="https://res.cloudinary.com/dqsl62kr9/image/upload/v1784382887/portfolio_zy6lxy.png"
+            src="https://res.cloudinary.com/dqsl62kr9/image/upload/v1784818615/mypic_tzlbep.png"
             alt="Portrait"
             className="w-full h-auto object-cover"
             style={{
@@ -78,7 +78,7 @@ export default function About() {
           {/* Mobile Portrait (Mobile only) - Rendered after headings */}
           <div className="block lg:hidden w-full h-[40vh] min-h-[300px] overflow-hidden rounded-2xl border border-ink/20">
             <img
-              src="https://res.cloudinary.com/dqsl62kr9/image/upload/v1784390430/file_0000000096048207a74d7b503e17c737_hwmbiy.png"
+              src="https://res.cloudinary.com/dqsl62kr9/image/upload/v1784818615/mypic_tzlbep.png"
               alt="Portrait"
               className="w-full h-full object-cover object-center"
               style={{
